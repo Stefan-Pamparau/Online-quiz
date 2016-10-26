@@ -2,6 +2,7 @@ package com.iquest.model.quiz.question;
 
 import com.iquest.model.quiz.answer.SimpleAnswer;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -10,7 +11,7 @@ import javax.persistence.OneToOne;
 @DiscriminatorValue(value = "SIMPLE_QUESTION")
 public class SimpleQuestion {
 
-    @OneToOne(mappedBy = "question", optional = false)
+    @OneToOne(mappedBy = "question", optional = false, cascade = CascadeType.ALL)
     private SimpleAnswer answer;
 
     public SimpleAnswer getAnswer() {

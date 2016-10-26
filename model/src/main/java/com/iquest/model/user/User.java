@@ -3,6 +3,7 @@ package com.iquest.model.user;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -40,12 +41,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    @OneToMany(mappedBy = "requester")
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL)
     private List<Friendship> friendships;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserLobbySession> lobby;
-
 
     public Integer getId() {
         return id;
