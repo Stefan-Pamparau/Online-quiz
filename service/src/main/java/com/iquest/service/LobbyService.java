@@ -2,9 +2,35 @@ package com.iquest.service;
 
 import com.iquest.model.Lobby;
 
+import java.util.Date;
 import java.util.List;
 
 public interface LobbyService {
+    /**
+     * Returns lobbies with a creation date greater than a given date.
+     *
+     * @param date reference date
+     * @return lobbies with a creation date greater than a given date.
+     */
+    List<Lobby> findByCreationDateGreaterThan(Date date);
+
+    /**
+     * Returns lobbies with a creation date less than a given date.
+     *
+     * @param date reference date
+     * @return lobbies with a creation date less than a given date.
+     */
+    List<Lobby> findByCreationDateLessThan(Date date);
+
+    /**
+     * Returns lobbies with a creation date between given dates.
+     *
+     * @param min min date
+     * @param max max date
+     * @return lobbies with a creation date between given dates.
+     */
+    List<Lobby> findByCreationDateBetween(Date min, Date max);
+
     /**
      * Saves a given lobby.
      *

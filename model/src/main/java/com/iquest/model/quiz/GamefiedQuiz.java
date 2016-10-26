@@ -4,6 +4,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(value = "GAMIFIED_QUIZ")
-public class GamifiedQuiz extends Quiz {
+@DiscriminatorValue(value = "GAMEFIED_QUIZ")
+public class GamefiedQuiz extends Quiz {
 }

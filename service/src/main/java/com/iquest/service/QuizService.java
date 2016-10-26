@@ -8,25 +8,25 @@ public interface QuizService {
     /**
      * Saves a given quiz.
      *
-     * @param admin admin to be saved
-     * @return the saved admin
+     * @param quiz quiz to be saved
+     * @return the saved quiz
      */
-    Quiz save(Quiz admin);
+    Quiz save(Quiz quiz);
 
     /**
-     * Retrieves an admin by its id.
+     * Retrieves an quiz by its id.
      *
      * @param id must not be {@literal null}.
-     * @return the admin with the given id or {@literal null} if none found
+     * @return the quiz with the given id or {@literal null} if none found
      * @throws IllegalArgumentException if {@code id} is {@literal null}
      */
     Quiz findWithId(Integer id);
 
     /**
-     * Returns whether an admin with the given id exists.
+     * Returns whether an quiz with the given id exists.
      *
      * @param id must not be {@literal null}.
-     * @return true if an admin with the given id exists, {@literal false} otherwise
+     * @return true if an quiz with the given id exists, {@literal false} otherwise
      * @throws IllegalArgumentException if {@code id} is {@literal null}
      */
     Boolean exists(Integer id);
@@ -46,7 +46,7 @@ public interface QuizService {
     Long getNumberOfAdmins();
 
     /**
-     * Deletes the admin with the given id.
+     * Deletes the quiz with the given id.
      *
      * @param id must not be {@literal null}.
      * @throws IllegalArgumentException in case the given {@code id} is {@literal null}
@@ -54,12 +54,12 @@ public interface QuizService {
     void delete(Integer id);
 
     /**
-     * Deletes a given admin.
+     * Deletes a given quiz.
      *
-     * @param admin admin to be deleted
-     * @throws IllegalArgumentException in case the given admin is {@literal null}.
+     * @param quiz quiz to be deleted
+     * @throws IllegalArgumentException in case the given quiz is {@literal null}.
      */
-    void delete(Quiz admin);
+    void delete(Quiz quiz);
 
     /**
      * Deletes all quizzes managed by the service.
