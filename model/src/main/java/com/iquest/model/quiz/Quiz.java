@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.iquest.model.Lobby;
 import com.iquest.model.quiz.question.Question;
+import com.iquest.model.user.Client;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -44,6 +46,9 @@ public class Quiz {
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
     private List<Question> questions;
+
+    @ManyToOne
+    private Client client;
 
     public Integer getId() {
         return id;
@@ -75,6 +80,14 @@ public class Quiz {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     @Override

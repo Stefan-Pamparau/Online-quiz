@@ -9,7 +9,7 @@ import javax.persistence.OneToOne;
 
 @Entity
 @DiscriminatorValue(value = "SIMPLE_QUESTION")
-public class SimpleQuestion {
+public class SimpleQuestion extends Question {
 
     @OneToOne(mappedBy = "question", optional = false, cascade = CascadeType.ALL)
     private SimpleAnswer answer;
