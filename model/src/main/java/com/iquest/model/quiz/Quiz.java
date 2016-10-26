@@ -3,9 +3,9 @@ package com.iquest.model.quiz;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.iquest.model.Lobby;
-import com.iquest.model.quiz.question.MultipleChoiceQuestion;
-import com.iquest.model.quiz.question.SingleChoiceQuestion;
+import com.iquest.model.quiz.question.Question;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -21,7 +21,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "quiz")
@@ -38,15 +38,12 @@ public class Quiz {
     @OneToOne(mappedBy = "quiz", optional = false)
     private Lobby lobby;
 
-    @OneToMany(mappedBy = "quiz")
-    private Set<SingleChoiceQuestion> singleChoiceQuestions;
-
-    @OneToMany(mappedBy = "quiz")
-    private Set<MultipleChoiceQuestion> multipleChoiceQuestions;
-
     @Column(name = "quiz_type", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private QuizType quizType;
+
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
+    private List<Question> questions;
 
     public Integer getId() {
         return id;
@@ -64,28 +61,20 @@ public class Quiz {
         this.lobby = lobby;
     }
 
-    public Set<SingleChoiceQuestion> getSingleChoiceQuestions() {
-        return singleChoiceQuestions;
-    }
-
-    public void setSingleChoiceQuestions(Set<SingleChoiceQuestion> singleChoiceQuestions) {
-        this.singleChoiceQuestions = singleChoiceQuestions;
-    }
-
-    public Set<MultipleChoiceQuestion> getMultipleChoiceQuestions() {
-        return multipleChoiceQuestions;
-    }
-
-    public void setMultipleChoiceQuestions(Set<MultipleChoiceQuestion> multipleChoiceQuestions) {
-        this.multipleChoiceQuestions = multipleChoiceQuestions;
-    }
-
     public QuizType getQuizType() {
         return quizType;
     }
 
     public void setQuizType(QuizType quizType) {
         this.quizType = quizType;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 
     @Override

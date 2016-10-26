@@ -2,7 +2,11 @@ package com.iquest.model.user;
 
 import com.iquest.model.Lobby;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 public class UserLobbySession {

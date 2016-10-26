@@ -3,8 +3,21 @@ package com.iquest.model.user;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -28,10 +41,11 @@ public class User {
     private UserType userType;
 
     @OneToMany(mappedBy = "requester")
-    private Set<Friendship> friendships;
+    private List<Friendship> friendships;
 
     @OneToMany(mappedBy = "user")
-    private Set<UserLobbySession> lobby;
+    private List<UserLobbySession> lobby;
+
 
     public Integer getId() {
         return id;
@@ -89,12 +103,20 @@ public class User {
         this.userType = userType;
     }
 
-    public Set<Friendship> getFriendships() {
+    public List<Friendship> getFriendships() {
         return friendships;
     }
 
-    public void setFriendships(Set<Friendship> friendships) {
+    public void setFriendships(List<Friendship> friendships) {
         this.friendships = friendships;
+    }
+
+    public List<UserLobbySession> getLobby() {
+        return lobby;
+    }
+
+    public void setLobby(List<UserLobbySession> lobby) {
+        this.lobby = lobby;
     }
 
     @Override

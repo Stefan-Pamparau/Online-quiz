@@ -3,9 +3,17 @@ package com.iquest.model;
 import com.iquest.model.quiz.Quiz;
 import com.iquest.model.user.UserLobbySession;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "lobby")
@@ -19,10 +27,9 @@ public class Lobby {
     Date creationDate;
 
     @OneToMany(mappedBy = "lobby")
-    private Set<UserLobbySession> users;
+    private List<UserLobbySession> users;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
     public Integer getId() {
@@ -41,11 +48,11 @@ public class Lobby {
         this.creationDate = creationDate;
     }
 
-    public Set<UserLobbySession> getUsers() {
+    public List<UserLobbySession> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<UserLobbySession> users) {
+    public void setUsers(List<UserLobbySession> users) {
         this.users = users;
     }
 
