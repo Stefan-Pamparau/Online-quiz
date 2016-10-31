@@ -3,6 +3,7 @@ package com.iquest.model.quiz.question;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.iquest.model.quiz.Quiz;
+import com.iquest.model.user.Client;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -33,6 +34,9 @@ public class Question {
     @ManyToOne
     private Quiz quiz;
 
+    @ManyToOne
+    private Client client;
+
     @Column(name = "question_type", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
@@ -59,6 +63,14 @@ public class Question {
 
     public void setQuestionType(QuestionType questionType) {
         this.questionType = questionType;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     @Override
