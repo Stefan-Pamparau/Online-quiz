@@ -23,6 +23,15 @@ public interface ClientService {
     Client findWithId(Integer id);
 
     /**
+     * Retrieves a client by its email.
+     *
+     * @param email must not be {@literal null}.
+     * @return the client with the given email or {@literal null} if none found
+     * @throws IllegalArgumentException if {@code email} is {@literal null}
+     */
+    Client findByEmail(String email);
+
+    /**
      * Returns whether an client with the given id exists.
      *
      * @param id must not be {@literal null}.

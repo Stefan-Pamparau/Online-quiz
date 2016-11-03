@@ -28,6 +28,15 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Client findByEmail(String email) {
+        List<Client> clients = clientDao.findByEmail(email);
+        if(clients == null || clients.size() != 1) {
+            return null;
+        }
+        return clients.get(0);
+    }
+
+    @Override
     public Boolean exists(Integer id) {
         return clientDao.exists(id);
     }

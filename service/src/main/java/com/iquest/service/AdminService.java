@@ -23,6 +23,15 @@ public interface AdminService {
     Admin findWithId(Integer id);
 
     /**
+     * Retrieves an admin by its email.
+     *
+     * @param email must not be {@literal null}.
+     * @return the admin with the given email or {@literal null} if none found
+     * @throws IllegalArgumentException if {@code email} is {@literal null}
+     */
+    Admin findByEmail(String email);
+
+    /**
      * Returns whether an admin with the given id exists.
      *
      * @param id must not be {@literal null}.

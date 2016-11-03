@@ -28,6 +28,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public Admin findByEmail(String email) {
+        List<Admin> admins = adminDao.findByEmail(email);
+        if (admins == null || admins.size() != 1) {
+            return null;
+        }
+        return admins.get(0);
+    }
+
+    @Override
     public Boolean exists(Integer id) {
         return adminDao.exists(id);
     }

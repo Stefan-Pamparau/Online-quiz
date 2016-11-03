@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface AdminDao extends CrudRepository<Admin, Integer> {
+    List<Admin> findByEmail(String email);
 }
