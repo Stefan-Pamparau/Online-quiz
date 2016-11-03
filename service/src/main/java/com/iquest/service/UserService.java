@@ -1,6 +1,5 @@
 package com.iquest.service;
 
-import com.iquest.model.user.Admin;
 import com.iquest.model.user.User;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public interface UserService {
      * @param password password of user
      * @return all users with a given email and password
      */
-    List<Admin> findByEmailAndPassword(String email, String password);
+    List<User> findByEmailAndPassword(String email, String password);
 
     /**
      * Saves a given user.

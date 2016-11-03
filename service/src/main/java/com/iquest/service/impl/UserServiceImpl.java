@@ -1,7 +1,6 @@
 package com.iquest.service.impl;
 
 import com.iquest.dao.UserDao;
-import com.iquest.model.user.Admin;
 import com.iquest.model.user.User;
 import com.iquest.service.UserService;
 import com.iquest.service.util.ServiceUtil;
@@ -19,7 +18,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public List<Admin> findByEmailAndPassword(String email, String password) {
+    public List<User> findByEmailAndPassword(String email, String password) {
         return userDao.findByEmailAndPassword(email, password);
     }
 
