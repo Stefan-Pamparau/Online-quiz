@@ -22,8 +22,12 @@ import java.util.List;
 @RequestMapping(path = "/admin")
 public class AdminController {
 
+    private final AdminService adminService;
+
     @Autowired
-    private AdminService adminService;
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
     @GetMapping("/get/all")
     public ResponseEntity<List<Admin>> getAllAdmins() {
@@ -51,7 +55,7 @@ public class AdminController {
 
         adminService.save(admin);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentServletMapping().path("get/{id}").buildAndExpand(admin.getId()).toUri());
+        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentServletMapping().path("/get/{id}").buildAndExpand(admin.getId()).toUri());
 
         return new ResponseEntity<>(admin, httpHeaders, HttpStatus.CREATED);
     }
@@ -67,22 +71,23 @@ public class AdminController {
         persistedAdmin.setAge(admin.getAge());
         persistedAdmin.setEmail(admin.getEmail());
         persistedAdmin.setPassword(admin.getPassword());
-        adminService.save(admin);
+
+        adminService.save(persistedAdmin);
         return new ResponseEntity<>(persistedAdmin, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Admin> deleteAdmin(@RequestBody Admin admin) {
+    public ResponseEntity<Void> deleteAdmin(@RequestBody Admin admin) {
         Admin persistedAdmin = adminService.findByEmail(admin.getEmail());
         if (persistedAdmin == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        adminService.delete(admin);
+        adminService.delete(persistedAdmin);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/all")
-    public ResponseEntity<Admin> deleteAllAdmins() {
+    public ResponseEntity<Void> deleteAllAdmins() {
         adminService.deleteAll();
         return new ResponseEntity<>(HttpStatus.OK);
     }

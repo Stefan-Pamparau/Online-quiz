@@ -31,6 +31,8 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String questionText;
+
     @ManyToOne
     private Quiz quiz;
 
@@ -47,6 +49,14 @@ public class Question {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getQuestionText() {
+        return questionText;
+    }
+
+    public void setQuestionText(String questionText) {
+        this.questionText = questionText;
     }
 
     public Quiz getQuiz() {
@@ -81,6 +91,8 @@ public class Question {
         Question question = (Question) o;
 
         if (id != null ? !id.equals(question.id) : question.id != null) return false;
+        if (questionText != null ? !questionText.equals(question.questionText) : question.questionText != null)
+            return false;
         return questionType == question.questionType;
 
     }
@@ -88,6 +100,7 @@ public class Question {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (questionText != null ? questionText.hashCode() : 0);
         result = 31 * result + (questionType != null ? questionType.hashCode() : 0);
         return result;
     }

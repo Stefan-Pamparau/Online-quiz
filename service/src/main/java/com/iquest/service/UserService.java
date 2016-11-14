@@ -13,13 +13,13 @@ public interface UserService {
      * @param password password of user
      * @return all users with a given email and password
      */
-    List<User> findByEmailAndPassword(String email, String password);
+    User findByEmailAndPassword(String email, String password);
 
 
     /**
      * Returns all users with a given email.
      *
-     * @param email    email of user
+     * @param email email of user
      * @return all users with a given email
      */
     List<User> findByEmail(String email);

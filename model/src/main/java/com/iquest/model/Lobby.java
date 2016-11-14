@@ -24,7 +24,7 @@ public class Lobby {
     private Integer id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    Date creationDate;
+    private Date creationDate;
 
     @OneToMany(mappedBy = "lobby")
     private List<UserLobbySession> users;
