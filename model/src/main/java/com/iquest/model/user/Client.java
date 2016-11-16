@@ -13,11 +13,21 @@ import java.util.List;
 @DiscriminatorValue(value = "CLIENT")
 public class Client extends User {
 
+    private Boolean registered = false;
+
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Quiz> quizzes;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Question> questions;
+
+    public Boolean getRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(Boolean registered) {
+        this.registered = registered;
+    }
 
     public List<Quiz> getQuizzes() {
         return quizzes;
