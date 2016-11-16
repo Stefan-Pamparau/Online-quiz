@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication(scanBasePackages = "iquest")
-//@EntityScan(basePackages = "model")
 public class ServerBoot {
 
     public static void main(String[] args) {
