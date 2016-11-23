@@ -3,21 +3,7 @@ package com.iquest.model.user;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -40,9 +26,6 @@ public class User {
     @Column(name = "user_type", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private UserType userType;
-
-    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL)
-    private List<Friendship> friendships;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserLobbySession> lobby;
@@ -101,14 +84,6 @@ public class User {
 
     public void setUserType(UserType userType) {
         this.userType = userType;
-    }
-
-    public List<Friendship> getFriendships() {
-        return friendships;
-    }
-
-    public void setFriendships(List<Friendship> friendships) {
-        this.friendships = friendships;
     }
 
     public List<UserLobbySession> getLobby() {

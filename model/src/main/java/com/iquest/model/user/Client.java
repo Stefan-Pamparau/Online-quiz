@@ -21,6 +21,9 @@ public class Client extends User {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Question> questions;
 
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL)
+    private List<Friendship> friendships;
+
     public Boolean getConfirmed() {
         return confirmed;
     }
@@ -43,5 +46,13 @@ public class Client extends User {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public List<Friendship> getFriendships() {
+        return friendships;
+    }
+
+    public void setFriendships(List<Friendship> friendships) {
+        this.friendships = friendships;
     }
 }
