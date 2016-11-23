@@ -37,31 +37,26 @@ public class PermissionFilter implements Filter {
         boolean loginRequest = path.equals("/login");
         boolean registerRequest = path.equals("/register");
 
-        if (path.equals("/")) {
+        if (registerRequest || loginRequest) {
+            logger.info("Request is of register or login type");
             chain.doFilter(request, response);
-            logger.info("Request is for index");
-        } else {
-            if (registerRequest || loginRequest) {
-                logger.info("Request is of register or login type");
-                chain.doFilter(request, response);
-            } else if (loggedIn) {
-                if (path.contains("insert") || path.contains("update") || path.contains("delete")) {
-                    logger.info("Request requires admin privileges");
-                    User user = (User) session.getAttribute(LOGGED_USER_KEY);
-                    if (user.getUserType() != UserType.ADMIN) {
-                        logger.info("Logged user does not have necessary permissions");
-                        servletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    } else {
-                        logger.info("Logger user has necessary permissions");
-                        chain.doFilter(request, response);
-                    }
+        } else if (loggedIn) {
+            if (path.contains("insert") || path.contains("update") || path.contains("delete")) {
+                logger.info("Request requires admin privileges");
+                User user = (User) session.getAttribute(LOGGED_USER_KEY);
+                if (user.getUserType() != UserType.ADMIN) {
+                    logger.info("Logged user does not have necessary permissions");
+                    servletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
                 } else {
-                    logger.info("Request does not require admin privileges");
+                    logger.info("Logger user has necessary permissions");
                     chain.doFilter(request, response);
                 }
             } else {
-                servletResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+                logger.info("Request does not require admin privileges");
+                chain.doFilter(request, response);
             }
+        } else {
+            servletResponse.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
         }
     }
 
