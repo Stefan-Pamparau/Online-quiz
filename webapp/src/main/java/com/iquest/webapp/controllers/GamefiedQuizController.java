@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/gamefiedQuiz")
-public class GamefiedQuizController {
+public class GamefiedQuizController extends AbstractController {
 
     private final GamefiedQuizService gamefiedQuizService;
 

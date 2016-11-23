@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/lobby")
-public class LobbyController {
+public class LobbyController extends AbstractController {
 
     private final LobbyService lobbyService;
 

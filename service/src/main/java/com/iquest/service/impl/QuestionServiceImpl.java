@@ -38,7 +38,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfQuestions() {
         return questionDao.count();
     }
 
