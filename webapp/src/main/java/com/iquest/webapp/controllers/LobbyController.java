@@ -1,4 +1,4 @@
-package com.iquest.controllers;
+package com.iquest.webapp.controllers;
 
 import com.iquest.model.Lobby;
 import com.iquest.service.LobbyService;

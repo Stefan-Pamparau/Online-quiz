@@ -1,4 +1,4 @@
-package com.iquest.controllers;
+package com.iquest.webapp.controllers;
 
 import com.iquest.model.user.Client;
 import com.iquest.service.ClientService;

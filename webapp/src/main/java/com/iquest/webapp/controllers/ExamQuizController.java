@@ -1,4 +1,4 @@
-package com.iquest.controllers;
+package com.iquest.webapp.controllers;
 
 import com.iquest.model.quiz.ExamQuiz;
 import com.iquest.service.ExamQuizService;

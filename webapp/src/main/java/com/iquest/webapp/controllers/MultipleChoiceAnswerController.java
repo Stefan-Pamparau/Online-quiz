@@ -1,4 +1,4 @@
-package com.iquest.controllers;
+package com.iquest.webapp.controllers;
 
 import com.iquest.model.quiz.answer.MultipleChoiceAnswer;
 import com.iquest.service.MultipleChoiceAnswerService;
