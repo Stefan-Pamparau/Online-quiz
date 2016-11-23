@@ -38,7 +38,7 @@ public class GamefiedQuizServiceImpl implements GamefiedQuizService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfGamefiedQuizzes() {
         return gamefiedQuizDao.count();
     }
 

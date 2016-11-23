@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfUsers() {
         return userDao.count();
     }
 

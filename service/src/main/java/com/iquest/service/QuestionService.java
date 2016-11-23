@@ -43,7 +43,7 @@ public interface QuestionService {
      *
      * @return the number of questions
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfQuestions();
 
     /**
      * Deletes the question with the given id.

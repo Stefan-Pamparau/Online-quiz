@@ -43,7 +43,7 @@ public interface ExamQuizService {
      *
      * @return the number of exam quizzes
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfExamQuizzes();
 
     /**
      * Deletes the exam quiz with the given id.

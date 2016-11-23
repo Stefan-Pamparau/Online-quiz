@@ -38,7 +38,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfQuizzes() {
         return quizDao.count();
     }
 

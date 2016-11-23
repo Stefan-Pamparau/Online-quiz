@@ -44,7 +44,7 @@ public interface MultipleChoiceAnswerService {
      *
      * @return the number of multiple choice answers
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfMultipleChoiceAnswers();
 
     /**
      * Deletes the multiple choice answer with the given id.

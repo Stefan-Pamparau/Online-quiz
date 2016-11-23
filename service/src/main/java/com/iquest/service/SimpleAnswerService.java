@@ -43,7 +43,7 @@ public interface SimpleAnswerService {
      *
      * @return the number of simple answers
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfSimpleAnswers();
 
     /**
      * Deletes the simple answer with the given id.

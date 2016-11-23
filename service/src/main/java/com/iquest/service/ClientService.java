@@ -52,7 +52,7 @@ public interface ClientService {
      *
      * @return the number of clients
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfClients();
 
     /**
      * Deletes the client with the given id.
@@ -74,4 +74,12 @@ public interface ClientService {
      * Deletes all clients managed by the service.
      */
     void deleteAll();
+
+    /**
+     * Adds a friendship between a requester and a friend.
+     *
+     * @param requester - requester of the friendship
+     * @param friend    - friend for the requester
+     */
+    void addFriend(Client requester, Client friend);
 }

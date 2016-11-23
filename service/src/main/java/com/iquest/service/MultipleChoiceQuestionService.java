@@ -43,7 +43,7 @@ public interface MultipleChoiceQuestionService {
      *
      * @return the number of multiple choice questions
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfMultipleChoiceQuestions();
 
     /**
      * Deletes the multiple choice question with the given id.

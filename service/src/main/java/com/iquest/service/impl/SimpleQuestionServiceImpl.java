@@ -38,7 +38,7 @@ public class SimpleQuestionServiceImpl implements SimpleQuestionService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfSimpleQuestions() {
         return simpleQuestionDao.count();
     }
 

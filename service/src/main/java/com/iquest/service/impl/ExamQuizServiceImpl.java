@@ -38,7 +38,7 @@ public class ExamQuizServiceImpl implements ExamQuizService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfExamQuizzes() {
         return examQuizDao.count();
     }
 

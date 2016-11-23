@@ -62,7 +62,7 @@ public interface UserService {
      *
      * @return the number of users
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfUsers();
 
     /**
      * Deletes the user with the given id.

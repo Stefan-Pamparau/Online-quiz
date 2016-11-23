@@ -69,7 +69,7 @@ public interface LobbyService {
      *
      * @return the number of lobbies
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfLobbies();
 
     /**
      * Deletes the lobby with the given id.

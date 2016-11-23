@@ -38,7 +38,7 @@ public class MultipleChoiceAnswerServiceImpl implements MultipleChoiceAnswerServ
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfMultipleChoiceAnswers() {
         return multipleChoiceAnswerDao.count();
     }
 

@@ -54,7 +54,7 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfLobbies() {
         return lobbyDao.count();
     }
 

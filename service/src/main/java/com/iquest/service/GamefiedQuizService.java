@@ -44,7 +44,7 @@ public interface GamefiedQuizService {
      *
      * @return the number of gamified quizzes
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfGamefiedQuizzes();
 
     /**
      * Deletes the gamified quiz with the given id.

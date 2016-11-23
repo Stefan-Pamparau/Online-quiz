@@ -24,6 +24,10 @@ public class Client extends User {
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL)
     private List<Friendship> friendships;
 
+    public void addFriendship(Friendship friendship) {
+        friendships.add(friendship);
+    }
+
     public Boolean getConfirmed() {
         return confirmed;
     }

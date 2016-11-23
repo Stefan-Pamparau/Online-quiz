@@ -43,7 +43,7 @@ public interface SimpleQuestionService {
      *
      * @return the number of simple questions
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfSimpleQuestions();
 
     /**
      * Deletes the simple question with the given id.

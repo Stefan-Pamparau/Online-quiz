@@ -43,7 +43,7 @@ public interface QuizService {
      *
      * @return the number of quizzes
      */
-    Long getNumberOfAdmins();
+    Long getNumberOfQuizzes();
 
     /**
      * Deletes the quiz with the given id.

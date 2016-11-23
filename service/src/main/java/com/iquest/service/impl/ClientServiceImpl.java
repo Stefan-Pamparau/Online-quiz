@@ -2,7 +2,9 @@ package com.iquest.service.impl;
 
 import com.iquest.dao.ClientDao;
 import com.iquest.model.user.Client;
+import com.iquest.model.user.Friendship;
 import com.iquest.service.ClientService;
+import com.iquest.service.FriendshipService;
 import com.iquest.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,9 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private ClientDao clientDao;
 
+    @Autowired
+    private FriendshipService friendshipService;
+
     @Override
     public Client save(Client client) {
         return clientDao.save(client);
@@ -30,7 +35,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public Client findByEmail(String email) {
         List<Client> clients = clientDao.findByEmail(email);
-        if(clients == null || clients.size() != 1) {
+        if (clients == null || clients.size() != 1) {
             return null;
         }
         return clients.get(0);
@@ -47,7 +52,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Long getNumberOfAdmins() {
+    public Long getNumberOfClients() {
         return clientDao.count();
     }
 
@@ -64,6 +69,18 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void deleteAll() {
         clientDao.deleteAll();
+    }
+
+    @Override
+    public void addFriend(Client requester, Client friend) {
+        Friendship friendship = new Friendship();
+        friendship.setRequester(requester);
+        friendship.setFriend(friend);
+//        friendshipService.save(friendship);
+        requester.addFriendship(friendship);
+        friend.addFriendship(friendship);
+        save(requester);
+        save(friend);
     }
 
     public ClientDao getClientDao() {
