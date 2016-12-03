@@ -7,17 +7,18 @@ import com.iquest.model.user.UserType;
 import com.iquest.service.AdminService;
 import com.iquest.service.ClientService;
 import com.iquest.service.UserService;
+import com.iquest.webapp.dto.LoginDto;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/user")
 public class LoginController extends AbstractController {
 
     private UserService userService;
@@ -30,14 +31,14 @@ public class LoginController extends AbstractController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<User> login(HttpServletRequest request, @RequestParam(name = "email", required = true) String email, @RequestParam(name = "password", required = true) String password) {
-        User user = userService.findByEmailAndPassword(email, password);
+    public ResponseEntity<User> login(HttpServletRequest request, @RequestBody LoginDto loginDto) {
+        User user = userService.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
         if (user != null) {
             if (UserType.ADMIN == user.getUserType()) {
-                Admin admin = adminService.findByEmail(email);
+                Admin admin = adminService.findByEmail(loginDto.getEmail());
                 request.getSession(true).setAttribute(LOGGED_USER_KEY, admin);
             } else {
-                Client client = clientService.findByEmail(email);
+                Client client = clientService.findByEmail(loginDto.getEmail());
                 request.getSession(true).setAttribute(LOGGED_USER_KEY, client);
             }
             return new ResponseEntity<>(HttpStatus.OK);
