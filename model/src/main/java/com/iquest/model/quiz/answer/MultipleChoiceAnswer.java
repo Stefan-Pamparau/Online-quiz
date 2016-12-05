@@ -4,6 +4,7 @@ import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -13,6 +14,7 @@ public class MultipleChoiceAnswer extends Answer {
     private Boolean isCorrect;
 
     @ManyToOne
+    @JoinColumn(name = "multiple_choice_question_id")
     private MultipleChoiceQuestion question;
 
     public Boolean getCorrect() {

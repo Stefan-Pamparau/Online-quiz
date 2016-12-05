@@ -11,7 +11,7 @@ import javax.persistence.OneToOne;
 @DiscriminatorValue(value = "SIMPLE_QUESTION")
 public class SimpleQuestion extends Question {
 
-    @OneToOne(mappedBy = "question", optional = false, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "question", cascade = CascadeType.ALL)
     private SimpleAnswer answer;
 
     public SimpleAnswer getAnswer() {
