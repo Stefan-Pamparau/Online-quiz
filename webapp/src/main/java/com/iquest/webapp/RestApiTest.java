@@ -4,7 +4,10 @@ import com.iquest.model.Lobby;
 import com.iquest.model.quiz.GamefiedQuiz;
 import com.iquest.model.quiz.Quiz;
 import com.iquest.model.quiz.QuizType;
+import com.iquest.model.quiz.answer.AnswerType;
+import com.iquest.model.quiz.answer.MultipleChoiceAnswer;
 import com.iquest.model.quiz.answer.SimpleAnswer;
+import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 import com.iquest.model.quiz.question.Question;
 import com.iquest.model.quiz.question.QuestionType;
 import com.iquest.model.quiz.question.SimpleQuestion;
@@ -53,6 +56,7 @@ public class RestApiTest {
     private static SimpleQuestion createSimpleQuestion(Quiz quiz) {
         SimpleAnswer simpleAnswer = new SimpleAnswer();
         simpleAnswer.setAnswerText("Answer text " + lastCreatedAnswer);
+        simpleAnswer.setAnswerType(AnswerType.SIMPLE_ANSWER);
         SimpleQuestion simpleQuestion = new SimpleQuestion();
         simpleAnswer.setQuestion(simpleQuestion);
         simpleQuestion.setQuestionText("Question text " + lastCreatedQuestion);
@@ -62,6 +66,21 @@ public class RestApiTest {
         lastCreatedQuestion++;
         lastCreatedAnswer++;
         return simpleQuestion;
+    }
+
+    private static MultipleChoiceQuestion createMultipleChoiceQuestion(Quiz quiz) {
+        MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion();
+        multipleChoiceQuestion.setQuestionText("Question text " + lastCreatedQuestion);
+        multipleChoiceQuestion.setQuiz(quiz);
+        multipleChoiceQuestion.setQuestionType(QuestionType.MULTIPLE_CHOICE_QUESTION);
+        return multipleChoiceQuestion;
+    }
+
+    private static MultipleChoiceAnswer createMultipleChoiceAnswer() {
+        MultipleChoiceAnswer multipleChoiceAnswer = new MultipleChoiceAnswer();
+        multipleChoiceAnswer.setAnswerType(AnswerType.MULTIPLE_CHOICE_ANSWER);
+        multipleChoiceAnswer.setAnswerText("Answer text " + lastCreatedAnswer++);
+        return multipleChoiceAnswer;
     }
 
     public static void main(String[] args) {
@@ -76,11 +95,29 @@ public class RestApiTest {
         gamefiedQuiz = restTemplate.postForObject(SERVER_URL + "gamefiedQuiz/insert", gamefiedQuizHttpEntity, GamefiedQuiz.class);
 
         SimpleQuestion simpleQuestion = createSimpleQuestion(gamefiedQuiz);
+        MultipleChoiceQuestion multipleChoiceQuestion = createMultipleChoiceQuestion(gamefiedQuiz);
         List<Question> questions1 = new ArrayList<>();
         questions1.add(simpleQuestion);
+        questions1.add(multipleChoiceQuestion);
         gamefiedQuiz.setQuestions(questions1);
-        HttpEntity<Question> simpleQuestionHttpEntity = new HttpEntity<>(simpleQuestion);
-
+        HttpEntity<SimpleQuestion> simpleQuestionHttpEntity = new HttpEntity<>(simpleQuestion);
         restTemplate.postForObject(SERVER_URL + "/simpleQuestion/insert", simpleQuestionHttpEntity, SimpleQuestion.class);
+
+        HttpEntity<MultipleChoiceQuestion> multipleChoiceQuestionHttpEntity = new HttpEntity<>(multipleChoiceQuestion);
+        multipleChoiceQuestion = restTemplate.postForObject(SERVER_URL + "/multipleChoiceQuestion/insert", multipleChoiceQuestionHttpEntity, MultipleChoiceQuestion.class);
+
+        MultipleChoiceAnswer multipleChoiceAnswer1 = createMultipleChoiceAnswer();
+        MultipleChoiceAnswer multipleChoiceAnswer2 = createMultipleChoiceAnswer();
+        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity1 = new HttpEntity<>(multipleChoiceAnswer1);
+        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity2 = new HttpEntity<>(multipleChoiceAnswer2);
+        multipleChoiceAnswer1.setQuestion(multipleChoiceQuestion);
+        multipleChoiceAnswer2.setQuestion(multipleChoiceQuestion);
+        multipleChoiceAnswer1 =  restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity1, MultipleChoiceAnswer.class);
+        multipleChoiceAnswer2 =  restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity2, MultipleChoiceAnswer.class);
+
+        List<MultipleChoiceAnswer> answers = new ArrayList<>();
+        answers.add(multipleChoiceAnswer1);
+        answers.add(multipleChoiceAnswer2);
+        restTemplate.postForObject(SERVER_URL + "/multipleChoiceQuestion/insert", multipleChoiceQuestionHttpEntity, MultipleChoiceQuestion.class);
     }
 }
