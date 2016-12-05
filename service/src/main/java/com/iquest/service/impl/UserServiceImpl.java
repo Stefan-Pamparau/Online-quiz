@@ -19,16 +19,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmailAndPassword(String email, String password) {
-        List<User> users = userDao.findByEmailAndPassword(email, password);
-
-        if (users == null || users.size() != 1) {
-            return null;
-        }
-        return users.get(0);
+        return userDao.findByEmailAndPassword(email, password);
     }
 
     @Override
-    public List<User> findByEmail(String email) {
+    public User findByEmail(String email) {
         return userDao.findByEmail(email);
     }
 

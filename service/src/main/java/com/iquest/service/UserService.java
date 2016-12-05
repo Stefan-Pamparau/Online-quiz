@@ -22,7 +22,7 @@ public interface UserService {
      * @param email email of user
      * @return all users with a given email
      */
-    List<User> findByEmail(String email);
+    User findByEmail(String email);
 
     /**
      * Saves a given user.
