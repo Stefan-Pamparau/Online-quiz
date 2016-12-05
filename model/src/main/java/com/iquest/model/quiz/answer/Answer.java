@@ -50,6 +50,14 @@ public class Answer {
         this.answerText = answerText;
     }
 
+    public AnswerType getAnswerType() {
+        return answerType;
+    }
+
+    public void setAnswerType(AnswerType answerType) {
+        this.answerType = answerType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,7 +66,8 @@ public class Answer {
         Answer answer = (Answer) o;
 
         if (id != null ? !id.equals(answer.id) : answer.id != null) return false;
-        return answerText != null ? answerText.equals(answer.answerText) : answer.answerText == null;
+        if (answerText != null ? !answerText.equals(answer.answerText) : answer.answerText != null) return false;
+        return answerType == answer.answerType;
 
     }
 
@@ -66,6 +75,7 @@ public class Answer {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (answerText != null ? answerText.hashCode() : 0);
+        result = 31 * result + (answerType != null ? answerType.hashCode() : 0);
         return result;
     }
 }
