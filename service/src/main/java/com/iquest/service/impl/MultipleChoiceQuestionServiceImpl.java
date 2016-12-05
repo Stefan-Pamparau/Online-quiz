@@ -1,7 +1,9 @@
 package com.iquest.service.impl;
 
 import com.iquest.dao.MultipleChoiceQuestionDao;
+import com.iquest.model.quiz.answer.MultipleChoiceAnswer;
 import com.iquest.model.quiz.question.MultipleChoiceQuestion;
+import com.iquest.service.MultipleChoiceAnswerService;
 import com.iquest.service.MultipleChoiceQuestionService;
 import com.iquest.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,27 @@ import java.util.List;
 @Transactional
 public class MultipleChoiceQuestionServiceImpl implements MultipleChoiceQuestionService {
 
-    @Autowired
     private MultipleChoiceQuestionDao multipleChoiceQuestionDao;
+    private MultipleChoiceAnswerService multipleChoiceAnswerService;
+
+    @Autowired
+    public MultipleChoiceQuestionServiceImpl(MultipleChoiceQuestionDao multipleChoiceQuestionDao, MultipleChoiceAnswerService multipleChoiceAnswerService) {
+        this.multipleChoiceQuestionDao = multipleChoiceQuestionDao;
+        this.multipleChoiceAnswerService = multipleChoiceAnswerService;
+    }
 
     @Override
     public MultipleChoiceQuestion save(MultipleChoiceQuestion multipleChoiceQuestion) {
+        if (multipleChoiceQuestion.getAnswers() != null) {
+           // saveAnswers(multipleChoiceQuestion.getAnswers());
+        }
         return multipleChoiceQuestionDao.save(multipleChoiceQuestion);
+    }
+
+    private void saveAnswers(List<MultipleChoiceAnswer> answers) {
+        for (MultipleChoiceAnswer multipleChoiceAnswer : answers) {
+            multipleChoiceAnswerService.save(multipleChoiceAnswer);
+        }
     }
 
     @Override

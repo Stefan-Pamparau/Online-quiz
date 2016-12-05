@@ -14,8 +14,12 @@ import java.util.List;
 @Transactional
 public class SimpleAnswerServiceImpl implements SimpleAnswerService {
 
-    @Autowired
     private SimpleAnswerDao simpleAnswerDao;
+
+    @Autowired
+    public SimpleAnswerServiceImpl(SimpleAnswerDao simpleAnswerDao) {
+        this.simpleAnswerDao = simpleAnswerDao;
+    }
 
     @Override
     public SimpleAnswer save(SimpleAnswer simpleAnswer) {

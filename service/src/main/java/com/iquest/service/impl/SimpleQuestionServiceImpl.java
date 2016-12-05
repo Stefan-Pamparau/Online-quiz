@@ -2,6 +2,7 @@ package com.iquest.service.impl;
 
 import com.iquest.dao.SimpleQuestionDao;
 import com.iquest.model.quiz.question.SimpleQuestion;
+import com.iquest.service.SimpleAnswerService;
 import com.iquest.service.SimpleQuestionService;
 import com.iquest.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,20 @@ import java.util.List;
 @Transactional
 public class SimpleQuestionServiceImpl implements SimpleQuestionService {
 
-    @Autowired
     private SimpleQuestionDao simpleQuestionDao;
+    private SimpleAnswerService simpleAnswerService;
+
+    @Autowired
+    public SimpleQuestionServiceImpl(SimpleQuestionDao simpleQuestionDao, SimpleAnswerService simpleAnswerService) {
+        this.simpleQuestionDao = simpleQuestionDao;
+        this.simpleAnswerService = simpleAnswerService;
+    }
 
     @Override
     public SimpleQuestion save(SimpleQuestion simpleQuestion) {
+        if (simpleQuestion.getAnswer() != null) {
+            //simpleAnswerService.save(simpleQuestion.getAnswer());
+        }
         return simpleQuestionDao.save(simpleQuestion);
     }
 

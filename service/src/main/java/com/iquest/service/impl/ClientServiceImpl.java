@@ -16,11 +16,15 @@ import java.util.List;
 @Transactional
 public class ClientServiceImpl implements ClientService {
 
-    @Autowired
     private ClientDao clientDao;
 
-    @Autowired
     private FriendshipService friendshipService;
+
+    @Autowired
+    public ClientServiceImpl(ClientDao clientDao, FriendshipService friendshipService) {
+        this.clientDao = clientDao;
+        this.friendshipService = friendshipService;
+    }
 
     @Override
     public Client save(Client client) {

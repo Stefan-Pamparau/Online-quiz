@@ -14,8 +14,12 @@ import java.util.List;
 @Transactional
 public class DefaultFriendshipService implements FriendshipService {
 
-    @Autowired
     private FriendshipDao friendshipDao;
+
+    @Autowired
+    public DefaultFriendshipService(FriendshipDao friendshipDao) {
+        this.friendshipDao = friendshipDao;
+    }
 
     @Override
     public Friendship save(Friendship friendship) {

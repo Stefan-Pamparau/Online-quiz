@@ -14,8 +14,12 @@ import java.util.List;
 @Transactional
 public class QuestionServiceImpl implements QuestionService {
 
-    @Autowired
     private QuestionDao questionDao;
+
+    @Autowired
+    public QuestionServiceImpl(QuestionDao questionDao) {
+        this.questionDao = questionDao;
+    }
 
     @Override
     public Question save(Question question) {

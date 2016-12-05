@@ -14,8 +14,13 @@ import java.util.List;
 @Transactional
 public class AnswerServiceImpl implements AnswerService {
 
-    @Autowired
     private AnswerDao answerDao;
+
+    @Autowired
+    public AnswerServiceImpl(AnswerDao answerDao) {
+        this.answerDao = answerDao;
+    }
+
 
     @Override
     public Answer save(Answer answer) {

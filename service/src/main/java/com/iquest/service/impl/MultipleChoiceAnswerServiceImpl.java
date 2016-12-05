@@ -14,8 +14,12 @@ import java.util.List;
 @Transactional
 public class MultipleChoiceAnswerServiceImpl implements MultipleChoiceAnswerService {
 
-    @Autowired
     private MultipleChoiceAnswerDao multipleChoiceAnswerDao;
+
+    @Autowired
+    public MultipleChoiceAnswerServiceImpl(MultipleChoiceAnswerDao multipleChoiceAnswerDao) {
+        this.multipleChoiceAnswerDao = multipleChoiceAnswerDao;
+    }
 
     @Override
     public MultipleChoiceAnswer save(MultipleChoiceAnswer multipleChoiceAnswer) {

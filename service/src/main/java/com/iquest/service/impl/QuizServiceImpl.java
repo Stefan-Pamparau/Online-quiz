@@ -14,8 +14,12 @@ import java.util.List;
 @Transactional
 public class QuizServiceImpl implements QuizService {
 
-    @Autowired
     private QuizDao quizDao;
+
+    @Autowired
+    public QuizServiceImpl(QuizDao quizDao) {
+        this.quizDao = quizDao;
+    }
 
     @Override
     public Quiz save(Quiz quiz) {

@@ -15,8 +15,12 @@ import java.util.List;
 @Transactional
 public class LobbyServiceImpl implements LobbyService {
 
-    @Autowired
     private LobbyDao lobbyDao;
+
+    @Autowired
+    public LobbyServiceImpl(LobbyDao lobbyDao) {
+        this.lobbyDao = lobbyDao;
+    }
 
     @Override
     public List<Lobby> findByCreationDateGreaterThan(Date date) {

@@ -14,8 +14,12 @@ import java.util.List;
 @Transactional
 public class AdminServiceImpl implements AdminService {
 
-    @Autowired
     private AdminDao adminDao;
+
+    @Autowired
+    public AdminServiceImpl(AdminDao adminDao) {
+        this.adminDao = adminDao;
+    }
 
     @Override
     public Admin save(Admin admin) {

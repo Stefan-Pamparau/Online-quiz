@@ -2,7 +2,13 @@ package com.iquest.service.impl;
 
 import com.iquest.dao.GamefiedQuizDao;
 import com.iquest.model.quiz.GamefiedQuiz;
+import com.iquest.model.quiz.question.MultipleChoiceQuestion;
+import com.iquest.model.quiz.question.Question;
+import com.iquest.model.quiz.question.QuestionType;
+import com.iquest.model.quiz.question.SimpleQuestion;
 import com.iquest.service.GamefiedQuizService;
+import com.iquest.service.MultipleChoiceQuestionService;
+import com.iquest.service.SimpleQuestionService;
 import com.iquest.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,12 +20,33 @@ import java.util.List;
 @Transactional
 public class GamefiedQuizServiceImpl implements GamefiedQuizService {
 
-    @Autowired
     private GamefiedQuizDao gamefiedQuizDao;
+    private SimpleQuestionService simpleQuestionService;
+    private MultipleChoiceQuestionService multipleChoiceQuestionService;
+
+    @Autowired
+    public GamefiedQuizServiceImpl(GamefiedQuizDao gamefiedQuizDao, SimpleQuestionService simpleQuestionService, MultipleChoiceQuestionService multipleChoiceQuestionService) {
+        this.gamefiedQuizDao = gamefiedQuizDao;
+        this.simpleQuestionService = simpleQuestionService;
+        this.multipleChoiceQuestionService = multipleChoiceQuestionService;
+    }
 
     @Override
     public GamefiedQuiz save(GamefiedQuiz gamefiedQuiz) {
+        if (gamefiedQuiz.getQuestions() != null) {
+            //saveQuestions(gamefiedQuiz.getQuestions());
+        }
         return gamefiedQuizDao.save(gamefiedQuiz);
+    }
+
+    private void saveQuestions(List<Question> questions) {
+        for (Question question : questions) {
+            if (QuestionType.SIMPLE_QUESTION == question.getQuestionType()) {
+                simpleQuestionService.save((SimpleQuestion) question);
+            } else {
+                multipleChoiceQuestionService.save((MultipleChoiceQuestion) question);
+            }
+        }
     }
 
     @Override
