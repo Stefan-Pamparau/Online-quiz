@@ -19,8 +19,8 @@ import org.springframework.security.core.authority.AuthorityUtils;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public static final String ADMIN_AUTHORITY = "ADMIN";
-    public static final String HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT = "hasAuthority(ADMIN) or hasAuthority(CLIENT)";
+    private static final String ADMIN_AUTHORITY = "ADMIN";
+    private static final String HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT = "hasAuthority(ADMIN) or hasAuthority(CLIENT)";
     private UserService userService;
 
     @Autowired
