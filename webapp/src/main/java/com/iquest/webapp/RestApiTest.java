@@ -111,7 +111,7 @@ public class RestApiTest {
         HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity1 = new HttpEntity<>(multipleChoiceAnswer1);
         HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity2 = new HttpEntity<>(multipleChoiceAnswer2);
         multipleChoiceAnswer1.setQuestion(multipleChoiceQuestion);
-        multipleChoiceAnswer2.setQuestion(multipleChoiceQuestion);
+        //multipleChoiceAnswer2.setQuestion(multipleChoiceQuestion);
         multipleChoiceAnswer1 =  restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity1, MultipleChoiceAnswer.class);
         multipleChoiceAnswer2 =  restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity2, MultipleChoiceAnswer.class);
 
