@@ -31,15 +31,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/admin").hasAuthority(ADMIN_AUTHORITY)
-                .antMatchers("/client").hasAuthority(ADMIN_AUTHORITY)
-                .antMatchers("/examQuizController").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/gamefiedQuizController").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/lobbyController").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/multipleChoiceAnswer").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/multipleChoiceQuestion").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/simpleAnswer").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/simpleQuestion").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/admin/**").hasAuthority(ADMIN_AUTHORITY)
+                .antMatchers("/client/**").hasAuthority(ADMIN_AUTHORITY)
+                .antMatchers("/examQuizController/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/gamefiedQuizController/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/lobbyController/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/multipleChoiceAnswer/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/multipleChoiceQuestion/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/simpleAnswer/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/simpleQuestion/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
                 .and().httpBasic()
                 .and().csrf().disable();
     }
