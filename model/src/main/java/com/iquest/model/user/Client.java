@@ -13,8 +13,6 @@ import java.util.List;
 @DiscriminatorValue(value = "CLIENT")
 public class Client extends User {
 
-    private Boolean confirmed = false;
-
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     private List<Quiz> quizzes;
 
@@ -26,14 +24,6 @@ public class Client extends User {
 
     public void addFriendship(Friendship friendship) {
         friendships.add(friendship);
-    }
-
-    public Boolean getConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
     }
 
     public List<Quiz> getQuizzes() {

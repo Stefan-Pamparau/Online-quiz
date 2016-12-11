@@ -22,6 +22,7 @@ public class User {
     private Integer age;
     private String email;
     private String password;
+    private Boolean confirmed = false;
 
     @Column(name = "user_type", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
@@ -94,6 +95,14 @@ public class User {
         this.lobby = lobby;
     }
 
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,6 +116,7 @@ public class User {
         if (age != null ? !age.equals(user.age) : user.age != null) return false;
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        if (confirmed != null ? !confirmed.equals(user.confirmed) : user.confirmed != null) return false;
         return userType == user.userType;
 
     }
@@ -119,6 +129,7 @@ public class User {
         result = 31 * result + (age != null ? age.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (confirmed != null ? confirmed.hashCode() : 0);
         result = 31 * result + (userType != null ? userType.hashCode() : 0);
         return result;
     }

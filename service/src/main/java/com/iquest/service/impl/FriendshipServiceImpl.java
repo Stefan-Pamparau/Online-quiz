@@ -12,12 +12,12 @@ import java.util.List;
 
 @Service("friendshipService")
 @Transactional
-public class DefaultFriendshipService implements FriendshipService {
+public class FriendshipServiceImpl implements FriendshipService {
 
     private FriendshipDao friendshipDao;
 
     @Autowired
-    public DefaultFriendshipService(FriendshipDao friendshipDao) {
+    public FriendshipServiceImpl(FriendshipDao friendshipDao) {
         this.friendshipDao = friendshipDao;
     }
 
