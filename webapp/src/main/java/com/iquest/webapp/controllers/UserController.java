@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    private static final String CONFIRMATION_MAIL_SUBJECT = "Online quiz confirmation";
-    private static final String USER_CONFIRM_LINK = "<form action=\"http://localhost:8080/user/confirm/%s\" method=\"post\"><input type=\"submit\" value=\"Confirm email\"/></form>";
-
     private UserService userService;
     private MailService mailService;
 
@@ -23,16 +20,6 @@ public class UserController {
     public UserController(UserService userService, MailService mailService) {
         this.userService = userService;
         this.mailService = mailService;
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        if (userService.save(user) == null) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        mailService.sendMail(user.getEmail(), CONFIRMATION_MAIL_SUBJECT, String.format(USER_CONFIRM_LINK, user.getEmail()));
-        return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
     }
 
     @PostMapping("/confirm/{email}")
@@ -45,8 +32,15 @@ public class UserController {
         }
 
         user.setConfirmed(true);
+        user.setConfirmed(true);
         userService.save(user);
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("delete/all")
+    public ResponseEntity<Void> deleteAllUsers() {
+        userService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
