@@ -43,8 +43,12 @@ public class ClientController extends AbstractController {
 
     @PostMapping("/insert")
     public ResponseEntity<Client> insertClient(@RequestBody Client client) {
-        clientService.save(client);
         HttpHeaders httpHeaders = new HttpHeaders();
+
+        if(clientService.save(client) == null) {
+            return new ResponseEntity<>(null, httpHeaders, HttpStatus.CONFLICT);
+        }
+
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentServletMapping().path("/get/{id}").buildAndExpand(client.getId()).toUri());
 
         return new ResponseEntity<>(client, httpHeaders, HttpStatus.CREATED);

@@ -28,6 +28,9 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Client save(Client client) {
+        if(findByEmail(client.getEmail()) != null) {
+            return null;
+        }
         return clientDao.save(client);
     }
 

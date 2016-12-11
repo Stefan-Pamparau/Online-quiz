@@ -42,12 +42,12 @@ public class AdminController extends AbstractController {
 
     @PostMapping("/insert")
     public ResponseEntity<Admin> insertAdmin(@RequestBody Admin admin) {
-        if (adminService.findByEmail(admin.getEmail()) != null) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        if(adminService.save(admin) == null) {
+            return new ResponseEntity<>(null, httpHeaders, HttpStatus.CONFLICT);
         }
 
-        adminService.save(admin);
-        HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentServletMapping().path("/get/{id}").buildAndExpand(admin.getId()).toUri());
 
         return new ResponseEntity<>(admin, httpHeaders, HttpStatus.CREATED);

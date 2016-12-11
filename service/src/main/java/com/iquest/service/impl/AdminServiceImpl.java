@@ -23,6 +23,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Admin save(Admin admin) {
+        if(findByEmail(admin.getEmail()) != null) {
+            return null;
+        }
         return adminDao.save(admin);
     }
 
