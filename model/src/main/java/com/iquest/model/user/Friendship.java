@@ -1,11 +1,6 @@
 package com.iquest.model.user;
 
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -16,25 +11,33 @@ public class Friendship {
 
     @ManyToOne
     @MapsId("requesterId")
-    private Client requester;
+    private User requester;
 
     @ManyToOne
     @MapsId("friendId")
-    private Client friend;
+    private User friend;
 
-    public Client getRequester() {
+    public FriendshipId getId() {
+        return id;
+    }
+
+    public void setId(FriendshipId id) {
+        this.id = id;
+    }
+
+    public User getRequester() {
         return requester;
     }
 
-    public void setRequester(Client requester) {
+    public void setRequester(User requester) {
         this.requester = requester;
     }
 
-    public Client getFriend() {
+    public User getFriend() {
         return friend;
     }
 
-    public void setFriend(Client friend) {
+    public void setFriend(User friend) {
         this.friend = friend;
     }
 

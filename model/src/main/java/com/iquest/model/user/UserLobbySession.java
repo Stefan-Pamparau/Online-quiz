@@ -23,6 +23,8 @@ public class UserLobbySession {
     @JoinColumn(name = "lobby_id", insertable = false, updatable = false)
     private Lobby lobby;
 
+    private Integer score;
+
     public UserLobbyId getId() {
         return id;
     }
@@ -45,6 +47,14 @@ public class UserLobbySession {
 
     public void setLobby(Lobby lobby) {
         this.lobby = lobby;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     @Override

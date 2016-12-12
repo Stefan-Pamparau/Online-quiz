@@ -29,7 +29,14 @@ public class User {
     private UserType userType;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserLobbySession> lobby;
+    private List<UserLobbySession> lobbies;
+
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL)
+    private List<Friendship> friendships;
+
+    public void addFriendship(Friendship friendship) {
+        friendships.add(friendship);
+    }
 
     public Integer getId() {
         return id;
@@ -87,12 +94,12 @@ public class User {
         this.userType = userType;
     }
 
-    public List<UserLobbySession> getLobby() {
-        return lobby;
+    public List<UserLobbySession> getLobbies() {
+        return lobbies;
     }
 
-    public void setLobby(List<UserLobbySession> lobby) {
-        this.lobby = lobby;
+    public void setLobbies(List<UserLobbySession> lobbies) {
+        this.lobbies = lobbies;
     }
 
     public Boolean getConfirmed() {
@@ -101,6 +108,14 @@ public class User {
 
     public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
+    }
+
+    public List<Friendship> getFriendships() {
+        return friendships;
+    }
+
+    public void setFriendships(List<Friendship> friendships) {
+        this.friendships = friendships;
     }
 
     @Override
