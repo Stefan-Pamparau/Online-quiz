@@ -22,7 +22,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ADMIN_AUTHORITY = "ADMIN";
-    private static final String HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT = "hasAuthority(ADMIN) or hasAuthority(CLIENT)";
+    private static final String ADMIN_OR_CLIENT_AUTHORITY = "ADMIN, CLIENT";
     private UserService userService;
 
     @Autowired
@@ -35,13 +35,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority(ADMIN_AUTHORITY)
                 .antMatchers("/client/**").hasAuthority(ADMIN_AUTHORITY)
-                .antMatchers("/examQuizController/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/gamefiedQuizController/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/lobbyController/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/multipleChoiceAnswer/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/multipleChoiceQuestion/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/simpleAnswer/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
-                .antMatchers("/simpleQuestion/**").access(HAS_AUTHORITY_ADMIN_OR_HAS_AUTHORITY_CLIENT)
+                .antMatchers("/examQuizController/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers("/gamefiedQuizController/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers("/lobbyController/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers("/multipleChoiceAnswer/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers("/multipleChoiceQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers("/simpleAnswer/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers("/simpleQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
                 .and().httpBasic()
                 .and().csrf().disable();
     }
@@ -57,7 +57,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             public Authentication authenticate(Authentication authentication) throws AuthenticationException {
                 String email = authentication.getName();
                 String password = authentication.getCredentials().toString();
-
                 User user = userService.findByEmailAndPassword(email, password);
 
                 if (user != null) {

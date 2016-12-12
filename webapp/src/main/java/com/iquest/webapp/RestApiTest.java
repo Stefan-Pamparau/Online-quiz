@@ -11,12 +11,18 @@ import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 import com.iquest.model.quiz.question.Question;
 import com.iquest.model.quiz.question.QuestionType;
 import com.iquest.model.quiz.question.SimpleQuestion;
+import com.iquest.model.user.Admin;
 import com.iquest.model.user.Client;
+import com.iquest.model.user.User;
 import com.iquest.model.user.UserType;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RestApiTest {
@@ -26,6 +32,30 @@ public class RestApiTest {
     private static int lastCreatedLobby = 1;
     private static int lastCreatedQuestion = 1;
     private static int lastCreatedAnswer = 1;
+
+    private static User authorizedUser;
+
+    private static User createAuthorizedUser() {
+        Admin admin = new Admin();
+        admin.setFirstName("First name " + lastCreatedUser);
+        admin.setSurname("Surname " + lastCreatedUser);
+        admin.setAge(25 + lastCreatedUser);
+        admin.setEmail("authorized@gmail.com");
+        admin.setPassword("password");
+        admin.setUserType(UserType.ADMIN);
+        lastCreatedUser++;
+        return admin;
+    }
+
+    private static HttpHeaders getAuthorizingHeaders() {
+        String plainCredentials = authorizedUser.getEmail() + ":" + authorizedUser.getPassword();
+        String base64Credentials = new String(Base64.encodeBase64(plainCredentials.getBytes()));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Basic " + base64Credentials);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        return headers;
+    }
 
     private static Client createClient() {
         Client client = new Client();
@@ -86,12 +116,16 @@ public class RestApiTest {
     public static void main(String[] args) {
         RestTemplate restTemplate = new RestTemplate();
 
+        authorizedUser = createAuthorizedUser();
+        HttpEntity<User> authorizedUserHttpEntity = new HttpEntity<>(authorizedUser);
+        authorizedUser = restTemplate.postForObject(SERVER_URL + "/register", authorizedUserHttpEntity, User.class);
+
         Client client = createClient();
-        HttpEntity<Client> clientHttpEntity = new HttpEntity<>(client);
+        HttpEntity<Client> clientHttpEntity = new HttpEntity<>(client, getAuthorizingHeaders());
         client = restTemplate.postForObject(SERVER_URL + "/client/insert", clientHttpEntity, Client.class);
 
         GamefiedQuiz gamefiedQuiz = createGamefiedQuiz(client, null);
-        HttpEntity<GamefiedQuiz> gamefiedQuizHttpEntity = new HttpEntity<>(gamefiedQuiz);
+        HttpEntity<GamefiedQuiz> gamefiedQuizHttpEntity = new HttpEntity<>(gamefiedQuiz, getAuthorizingHeaders());
         gamefiedQuiz = restTemplate.postForObject(SERVER_URL + "gamefiedQuiz/insert", gamefiedQuizHttpEntity, GamefiedQuiz.class);
 
         SimpleQuestion simpleQuestion = createSimpleQuestion(gamefiedQuiz);
@@ -100,24 +134,19 @@ public class RestApiTest {
         questions1.add(simpleQuestion);
         questions1.add(multipleChoiceQuestion);
         gamefiedQuiz.setQuestions(questions1);
-        HttpEntity<SimpleQuestion> simpleQuestionHttpEntity = new HttpEntity<>(simpleQuestion);
+        HttpEntity<SimpleQuestion> simpleQuestionHttpEntity = new HttpEntity<>(simpleQuestion, getAuthorizingHeaders());
         restTemplate.postForObject(SERVER_URL + "/simpleQuestion/insert", simpleQuestionHttpEntity, SimpleQuestion.class);
 
-        HttpEntity<MultipleChoiceQuestion> multipleChoiceQuestionHttpEntity = new HttpEntity<>(multipleChoiceQuestion);
+        HttpEntity<MultipleChoiceQuestion> multipleChoiceQuestionHttpEntity = new HttpEntity<>(multipleChoiceQuestion, getAuthorizingHeaders());
         multipleChoiceQuestion = restTemplate.postForObject(SERVER_URL + "/multipleChoiceQuestion/insert", multipleChoiceQuestionHttpEntity, MultipleChoiceQuestion.class);
 
         MultipleChoiceAnswer multipleChoiceAnswer1 = createMultipleChoiceAnswer();
         MultipleChoiceAnswer multipleChoiceAnswer2 = createMultipleChoiceAnswer();
-        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity1 = new HttpEntity<>(multipleChoiceAnswer1);
-        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity2 = new HttpEntity<>(multipleChoiceAnswer2);
+        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity1 = new HttpEntity<>(multipleChoiceAnswer1, getAuthorizingHeaders());
+        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity2 = new HttpEntity<>(multipleChoiceAnswer2, getAuthorizingHeaders());
         multipleChoiceAnswer1.setQuestion(multipleChoiceQuestion);
-        //multipleChoiceAnswer2.setQuestion(multipleChoiceQuestion);
-        multipleChoiceAnswer1 =  restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity1, MultipleChoiceAnswer.class);
-        multipleChoiceAnswer2 =  restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity2, MultipleChoiceAnswer.class);
-
-        List<MultipleChoiceAnswer> answers = new ArrayList<>();
-        answers.add(multipleChoiceAnswer1);
-        answers.add(multipleChoiceAnswer2);
-        restTemplate.postForObject(SERVER_URL + "/multipleChoiceQuestion/insert", multipleChoiceQuestionHttpEntity, MultipleChoiceQuestion.class);
+        multipleChoiceAnswer2.setQuestion(multipleChoiceQuestion);
+        multipleChoiceAnswer1 = restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity1, MultipleChoiceAnswer.class);
+        multipleChoiceAnswer2 = restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity2, MultipleChoiceAnswer.class);
     }
 }
