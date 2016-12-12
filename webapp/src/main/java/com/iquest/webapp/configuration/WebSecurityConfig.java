@@ -42,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/multipleChoiceQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
                 .antMatchers("/simpleAnswer/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
                 .antMatchers("/simpleQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers("/reports/**").hasAuthority(ADMIN_AUTHORITY)
                 .and().httpBasic()
                 .and().csrf().disable();
     }
