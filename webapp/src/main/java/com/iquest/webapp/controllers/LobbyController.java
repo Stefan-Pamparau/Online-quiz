@@ -63,6 +63,8 @@ public class LobbyController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        persistedLobby.setCreationDate(lobby.getCreationDate());
+
         lobbyService.save(persistedLobby);
         return new ResponseEntity<>(persistedLobby, HttpStatus.OK);
     }

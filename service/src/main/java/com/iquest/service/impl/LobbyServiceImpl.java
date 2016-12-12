@@ -1,13 +1,16 @@
 package com.iquest.service.impl;
 
 import com.iquest.dao.LobbyDao;
+import com.iquest.dao.UserLobbySessionDao;
 import com.iquest.model.Lobby;
+import com.iquest.model.user.UserLobbySession;
 import com.iquest.service.LobbyService;
 import com.iquest.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,10 +19,12 @@ import java.util.List;
 public class LobbyServiceImpl implements LobbyService {
 
     private LobbyDao lobbyDao;
+    private UserLobbySessionDao userLobbySessionDao;
 
     @Autowired
-    public LobbyServiceImpl(LobbyDao lobbyDao) {
+    public LobbyServiceImpl(LobbyDao lobbyDao, UserLobbySessionDao userLobbySessionDao) {
         this.lobbyDao = lobbyDao;
+        this.userLobbySessionDao = userLobbySessionDao;
     }
 
     @Override
@@ -39,7 +44,23 @@ public class LobbyServiceImpl implements LobbyService {
 
     @Override
     public Lobby save(Lobby lobby) {
-        return lobbyDao.save(lobby);
+        if (lobby.getUsers() != null) {
+            List<UserLobbySession> users = new ArrayList<>(lobby.getUsers());
+            lobby.setUsers(null);
+            lobby = lobbyDao.save(lobby);
+            saveUserLobbySessions(lobby, users);
+        } else {
+            lobby = lobbyDao.save(lobby);
+        }
+        return lobby;
+    }
+
+    private void saveUserLobbySessions(Lobby lobby, List<UserLobbySession> users) {
+        for (UserLobbySession userLobbySession : users) {
+            userLobbySession.getId().setLobbyId(lobby.getId());
+            userLobbySession.getId().setUserId(userLobbySession.getUser().getId());
+            userLobbySessionDao.save(userLobbySession);
+        }
     }
 
     @Override

@@ -1,22 +1,17 @@
 package com.iquest.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.iquest.model.quiz.Quiz;
 import com.iquest.model.user.UserLobbySession;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "lobby")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@lobbyId")
 public class Lobby {
 
     @Id
@@ -26,7 +21,7 @@ public class Lobby {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @OneToMany(mappedBy = "lobby")
+    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL)
     private List<UserLobbySession> users;
 
     @OneToOne(optional = false)

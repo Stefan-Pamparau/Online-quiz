@@ -79,7 +79,9 @@ public class ClientServiceImpl implements ClientService {
         Friendship friendship = new Friendship();
         friendship.setRequester(requester);
         friendship.setFriend(friend);
-//        friendshipService.save(friendship);
+        friendship.getId().setRequesterId(requester.getId());
+        friendship.getId().setFriendId(friend.getId());
+        friendshipService.save(friendship);
         requester.addFriendship(friendship);
         friend.addFriendship(friendship);
         save(requester);

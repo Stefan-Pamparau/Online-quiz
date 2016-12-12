@@ -11,10 +11,7 @@ import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 import com.iquest.model.quiz.question.Question;
 import com.iquest.model.quiz.question.QuestionType;
 import com.iquest.model.quiz.question.SimpleQuestion;
-import com.iquest.model.user.Admin;
-import com.iquest.model.user.Client;
-import com.iquest.model.user.User;
-import com.iquest.model.user.UserType;
+import com.iquest.model.user.*;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class RestApiTest {
@@ -106,6 +104,14 @@ public class RestApiTest {
         return multipleChoiceQuestion;
     }
 
+    private static SimpleAnswer createSimpleAnswer(SimpleQuestion simpleQuestion) {
+        SimpleAnswer simpleAnswer = new SimpleAnswer();
+        simpleAnswer.setQuestion(simpleQuestion);
+        simpleAnswer.setAnswerText("Answer text " + lastCreatedAnswer);
+        simpleAnswer.setAnswerType(AnswerType.SIMPLE_ANSWER);
+        return simpleAnswer;
+    }
+
     private static MultipleChoiceAnswer createMultipleChoiceAnswer() {
         MultipleChoiceAnswer multipleChoiceAnswer = new MultipleChoiceAnswer();
         multipleChoiceAnswer.setAnswerType(AnswerType.MULTIPLE_CHOICE_ANSWER);
@@ -135,19 +141,39 @@ public class RestApiTest {
         questions1.add(simpleQuestion);
         questions1.add(multipleChoiceQuestion);
         gamefiedQuiz.setQuestions(questions1);
+        SimpleAnswer simpleAnswer = new SimpleAnswer();
+        simpleQuestion.setAnswer(simpleAnswer);
         HttpEntity<SimpleQuestion> simpleQuestionHttpEntity = new HttpEntity<>(simpleQuestion, getAuthorizingHeaders());
         restTemplate.postForObject(SERVER_URL + "/simpleQuestion/insert", simpleQuestionHttpEntity, SimpleQuestion.class);
 
+        MultipleChoiceAnswer multipleChoiceAnswer1 = createMultipleChoiceAnswer();
+        MultipleChoiceAnswer multipleChoiceAnswer2 = createMultipleChoiceAnswer();
+        List<MultipleChoiceAnswer> multipleChoiceAnswerList = new ArrayList<>();
+        multipleChoiceAnswerList.add(multipleChoiceAnswer1);
+        multipleChoiceAnswerList.add(multipleChoiceAnswer2);
+        multipleChoiceQuestion.setAnswers(multipleChoiceAnswerList);
         HttpEntity<MultipleChoiceQuestion> multipleChoiceQuestionHttpEntity = new HttpEntity<>(multipleChoiceQuestion, getAuthorizingHeaders());
         multipleChoiceQuestion = restTemplate.postForObject(SERVER_URL + "/multipleChoiceQuestion/insert", multipleChoiceQuestionHttpEntity, MultipleChoiceQuestion.class);
 
-        MultipleChoiceAnswer multipleChoiceAnswer1 = createMultipleChoiceAnswer();
-        MultipleChoiceAnswer multipleChoiceAnswer2 = createMultipleChoiceAnswer();
-        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity1 = new HttpEntity<>(multipleChoiceAnswer1, getAuthorizingHeaders());
-        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity2 = new HttpEntity<>(multipleChoiceAnswer2, getAuthorizingHeaders());
-        multipleChoiceAnswer1.setQuestion(multipleChoiceQuestion);
-        multipleChoiceAnswer2.setQuestion(multipleChoiceQuestion);
-        multipleChoiceAnswer1 = restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity1, MultipleChoiceAnswer.class);
-        multipleChoiceAnswer2 = restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity2, MultipleChoiceAnswer.class);
+//        MultipleChoiceAnswer multipleChoiceAnswer1 = createMultipleChoiceAnswer();
+//        MultipleChoiceAnswer multipleChoiceAnswer2 = createMultipleChoiceAnswer();
+//        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity1 = new HttpEntity<>(multipleChoiceAnswer1, getAuthorizingHeaders());
+//        HttpEntity<MultipleChoiceAnswer> multipleChoiceAnswerHttpEntity2 = new HttpEntity<>(multipleChoiceAnswer2, getAuthorizingHeaders());
+//        multipleChoiceAnswer1.setQuestion(multipleChoiceQuestion);
+//        multipleChoiceAnswer2.setQuestion(multipleChoiceQuestion);
+//        multipleChoiceAnswer1 = restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity1, MultipleChoiceAnswer.class);
+//        multipleChoiceAnswer2 = restTemplate.postForObject(SERVER_URL + "/multipleChoiceAnswer/insert", multipleChoiceAnswerHttpEntity2, MultipleChoiceAnswer.class);
+
+        Lobby lobby = new Lobby();
+        UserLobbySession userLobbySession = new UserLobbySession();
+        List<UserLobbySession> userLobbySessionList = new ArrayList<>();
+        lobby.setCreationDate(new Date(System.currentTimeMillis()));
+        lobby.setQuiz(gamefiedQuiz);
+        lobby.setUsers(userLobbySessionList);
+        userLobbySession.setLobby(lobby);
+        userLobbySession.setUser(client);
+        userLobbySessionList.add(userLobbySession);
+        HttpEntity<Lobby> lobbyHttpEntity = new HttpEntity<>(lobby, getAuthorizingHeaders());
+        lobby = restTemplate.postForObject(SERVER_URL + "/lobby/insert", lobbyHttpEntity, Lobby.class);
     }
 }
