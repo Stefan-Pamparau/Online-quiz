@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 String password = authentication.getCredentials().toString();
                 User user = userService.findByEmailAndPassword(email, password);
 
-                if (user != null) {
+                if (user != null && user.getConfirmed()) {
                     Authentication auth;
                     if (UserType.ADMIN == user.getUserType()) {
                         auth = new UsernamePasswordAuthenticationToken(email, password, AuthorityUtils.createAuthorityList("ADMIN"));

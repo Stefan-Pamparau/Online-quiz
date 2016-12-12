@@ -119,6 +119,7 @@ public class RestApiTest {
         authorizedUser = createAuthorizedUser();
         HttpEntity<User> authorizedUserHttpEntity = new HttpEntity<>(authorizedUser);
         authorizedUser = restTemplate.postForObject(SERVER_URL + "/register", authorizedUserHttpEntity, User.class);
+        authorizedUser = restTemplate.postForObject(SERVER_URL + "/user/confirm/" + authorizedUser.getEmail(), authorizedUserHttpEntity, User.class);
 
         Client client = createClient();
         HttpEntity<Client> clientHttpEntity = new HttpEntity<>(client, getAuthorizingHeaders());

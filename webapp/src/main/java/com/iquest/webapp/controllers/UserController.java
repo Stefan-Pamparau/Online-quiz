@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping("/confirm/{email}")
     public ResponseEntity<User> confirmUser(@PathVariable("email") String userEmail) {
-        User user = userService.findByEmail(userEmail);
+        User user = userService.findByEmail(appendEmailDomain(userEmail));
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if (user == null) {
@@ -32,10 +32,13 @@ public class UserController {
         }
 
         user.setConfirmed(true);
-        user.setConfirmed(true);
         userService.save(user);
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    private String appendEmailDomain(String userEmail) {
+        return userEmail + ".com";
     }
 
     @DeleteMapping("delete/all")

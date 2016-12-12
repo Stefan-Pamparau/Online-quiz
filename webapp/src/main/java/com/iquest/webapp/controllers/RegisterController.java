@@ -74,7 +74,7 @@ public class RegisterController {
         client.setEmail(user.getEmail());
         client.setPassword(user.getPassword());
         client.setAge(user.getAge());
-        client.setUserType(UserType.ADMIN);
+        client.setUserType(UserType.CLIENT);
         client.setConfirmed(user.getConfirmed());
 
         return client;
