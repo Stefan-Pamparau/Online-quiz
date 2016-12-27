@@ -6,6 +6,8 @@ import com.iquest.service.ClientService;
 import com.iquest.service.LobbyService;
 import com.iquest.webapp.dto.report.ClientReportDto;
 import com.iquest.webapp.dto.report.LobbyReportDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/reports")
 public class ReportController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
+
     private ClientService clientService;
     private LobbyService lobbyService;
 
@@ -29,8 +33,9 @@ public class ReportController {
 
     @GetMapping("/clientReport/{id}")
     public ResponseEntity<ClientReportDto> generateClientReport(@PathVariable Integer id) {
-        Client client = clientService.findWithId(id);
+        logger.info(String.format("Generating client report for client with id %s", id));
 
+        Client client = clientService.findWithId(id);
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -45,8 +50,9 @@ public class ReportController {
 
     @GetMapping("/lobbyReport/{id}")
     public ResponseEntity<LobbyReportDto> generateLobbyReport(@PathVariable Integer id) {
-        Lobby lobby = lobbyService.findWithId(id);
+        logger.info(String.format("Generating lobby report for lobby with id", id));
 
+        Lobby lobby = lobbyService.findWithId(id);
         if (lobby == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

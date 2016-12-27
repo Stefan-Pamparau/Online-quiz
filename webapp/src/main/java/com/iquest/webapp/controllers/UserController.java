@@ -1,8 +1,9 @@
 package com.iquest.webapp.controllers;
 
 import com.iquest.model.user.User;
-import com.iquest.service.MailService;
 import com.iquest.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +17,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     private UserService userService;
-    private MailService mailService;
 
     @Autowired
-    public UserController(UserService userService, MailService mailService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.mailService = mailService;
     }
 
     @PostMapping("/confirm/{token}")
     public ResponseEntity<User> confirmUser(@PathVariable("token") String token) {
-        User user = userService.findByToken(token);
+        logger.info(String.format("Attempting to confirm user with token %s", token));
 
+        User user = userService.findByToken(token);
         if (user == null) {
+            logger.info(String.format("User with token %s not found", token));
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        logger.info(String.format("User with token %s found. Confirming him.", token));
         user.setConfirmed(true);
         userService.save(user);
 

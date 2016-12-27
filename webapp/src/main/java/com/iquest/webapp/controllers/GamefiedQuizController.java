@@ -2,6 +2,8 @@ package com.iquest.webapp.controllers;
 
 import com.iquest.model.quiz.GamefiedQuiz;
 import com.iquest.service.GamefiedQuizService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,9 @@ import java.util.List;
 @RequestMapping(path = "/gamefiedQuiz")
 public class GamefiedQuizController {
 
-    private final GamefiedQuizService gamefiedQuizService;
+    private static final Logger logger = LoggerFactory.getLogger(GamefiedQuizController.class);
+
+    private GamefiedQuizService gamefiedQuizService;
 
     @Autowired
     public GamefiedQuizController(GamefiedQuizService gamefiedQuizService) {
@@ -31,55 +35,69 @@ public class GamefiedQuizController {
 
     @GetMapping("/get/all")
     public ResponseEntity<List<GamefiedQuiz>> getAllGamefiedQuizzes() {
+        logger.info("Retrieving all gamefied quizzes");
+
         List<GamefiedQuiz> gamefiedQuizzes = gamefiedQuizService.findAll();
         if (gamefiedQuizzes.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
         return new ResponseEntity<>(gamefiedQuizzes, HttpStatus.OK);
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<GamefiedQuiz> getGamefiedQuizWithId(@PathVariable("id") Integer id) {
+        logger.info(String.format("Retrieving gamefied quiz with id %d", id));
+
         GamefiedQuiz gamefiedQuiz = gamefiedQuizService.findWithId(id);
         if (gamefiedQuiz == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<>(gamefiedQuiz, HttpStatus.OK);
     }
 
     @PostMapping("/insert")
     public ResponseEntity<GamefiedQuiz> insertGamefiedQuiz(@RequestBody GamefiedQuiz gamefiedQuiz) {
+        logger.info(String.format("Inserting gamefied quiz %s", gamefiedQuiz));
+
         gamefiedQuizService.save(gamefiedQuiz);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentServletMapping().path("/get/{id}").buildAndExpand(gamefiedQuiz.getId()).toUri());
+        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentContextPath().path("gamefiedQuiz/get/{id}").buildAndExpand(gamefiedQuiz.getId()).toUri());
 
         return new ResponseEntity<>(gamefiedQuiz, httpHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     public ResponseEntity<GamefiedQuiz> updateGamefiedQuiz(@RequestBody GamefiedQuiz gamefiedQuiz) {
+        logger.info(String.format("Updating gamefied quiz %s", gamefiedQuiz));
+
         GamefiedQuiz persistedGamefiedQuiz = gamefiedQuizService.findWithId(gamefiedQuiz.getId());
         if (persistedGamefiedQuiz == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         gamefiedQuizService.save(persistedGamefiedQuiz);
+
         return new ResponseEntity<>(persistedGamefiedQuiz, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteGamefiedQuiz(@RequestBody GamefiedQuiz gamefiedQuiz) {
+        logger.info(String.format("Deleting gamefied quiz", gamefiedQuiz));
+
         GamefiedQuiz persistedGamefiedQuiz = gamefiedQuizService.findWithId(gamefiedQuiz.getId());
         if (persistedGamefiedQuiz == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         gamefiedQuizService.delete(persistedGamefiedQuiz);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/all")
     public ResponseEntity<Void> deleteAllGamefiedQuizzes() {
+        logger.info("Deleting all gamefied quizzes");
         gamefiedQuizService.deleteAll();
         return new ResponseEntity<>(HttpStatus.OK);
     }

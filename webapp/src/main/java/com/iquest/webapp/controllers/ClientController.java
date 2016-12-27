@@ -3,6 +3,8 @@ package com.iquest.webapp.controllers;
 import com.iquest.model.user.Client;
 import com.iquest.service.ClientService;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,9 @@ import java.util.List;
 @RequestMapping(path = "/client")
 public class ClientController {
 
-    private final ClientService clientService;
+    private static final Logger logger = LoggerFactory.getLogger(ClientController.class);
+
+    private ClientService clientService;
 
     @Autowired
     public ClientController(ClientService clientService) {
@@ -32,53 +36,67 @@ public class ClientController {
 
     @GetMapping("/get/all")
     public ResponseEntity<List<Client>> getAllClients() {
+        logger.info("Retrieving all clients");
+
         List<Client> clients = clientService.findAll();
         if (clients.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
         return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<Client> getClientWithId(@PathVariable("id") Integer id) {
+        logger.info(String.format("Retrieving client with id %s", id));
+
         Client client = clientService.findWithId(id);
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
         return new ResponseEntity<>(client, HttpStatus.OK);
     }
 
     @PostMapping("/insert")
     public ResponseEntity<Client> insertClient(@RequestBody Client client) {
+        logger.info(String.format("Inserting client %s", client));
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if (clientService.save(client) == null) {
             return new ResponseEntity<>(null, httpHeaders, HttpStatus.CONFLICT);
         }
 
-        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentServletMapping().path("/get/{id}").buildAndExpand(client.getId()).toUri());
-
+        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentContextPath().path("client/get/{id}").buildAndExpand(client.getId()).toUri());
         return new ResponseEntity<>(client, httpHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Client> updateClient(@RequestBody Client client) {
+        logger.info(String.format("Updating client %s", client));
+
         Client persistedClient = clientService.findByEmail(client.getEmail());
         if (persistedClient == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        prepareClientForUpdate(client, persistedClient);
+        clientService.save(persistedClient);
+        return new ResponseEntity<>(persistedClient, HttpStatus.OK);
+    }
+
+    private void prepareClientForUpdate(Client client, Client persistedClient) {
         persistedClient.setFirstName(client.getFirstName());
         persistedClient.setSurname(client.getSurname());
         persistedClient.setAge(client.getAge());
         persistedClient.setEmail(client.getEmail());
         persistedClient.setPassword(client.getPassword());
-
-        clientService.save(persistedClient);
-        return new ResponseEntity<>(persistedClient, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteClient(@RequestBody Client client) {
+        logger.info(String.format("Deleting client %s", client));
+
         Client persistedClient = clientService.findByEmail(client.getEmail());
         if (persistedClient == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -89,11 +107,14 @@ public class ClientController {
 
     @DeleteMapping("/delete/all")
     public ResponseEntity<Void> deleteAllClients() {
+        logger.info("Deleting all clients");
         clientService.deleteAll();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public ResponseEntity<Void> addFriend(HttpServletRequest request, @RequestBody Client friend) {
+        logger.info(String.format("Adding friend %s", friend));
+
         Client requester = clientService.findByEmail(request.getUserPrincipal().getName());
         clientService.addFriend(requester, friend);
 

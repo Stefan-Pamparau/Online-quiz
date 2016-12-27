@@ -7,8 +7,9 @@ import com.iquest.model.user.UserType;
 import com.iquest.service.AdminService;
 import com.iquest.service.ClientService;
 import com.iquest.service.MailService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import java.security.SecureRandom;
 @RestController
 public class RegisterController {
 
+    private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private static final String CONFIRMATION_MAIL_SUBJECT = "Online quiz confirmation";
     private static final String USER_CONFIRM_LINK = "<form action=\"http://localhost:8080/user/confirm/%s\" method=\"post\"><input type=\"submit\" value=\"Confirm email\"/></form>";
 
@@ -39,21 +41,23 @@ public class RegisterController {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
-        HttpHeaders httpHeaders = new HttpHeaders();
         user.setToken(generateToken());
 
         if (UserType.ADMIN == user.getUserType()) {
+            logger.info(String.format("Registering admin %s", user));
             if (registerAdmin(user)) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
         } else {
+            logger.info(String.format("Registering client %s", user));
             if (registerClient(user)) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
         }
 
+        logger.info(String.format("Sending confirmation email to %s", user.getEmail()));
         mailService.sendMail(user.getEmail(), CONFIRMATION_MAIL_SUBJECT, String.format(USER_CONFIRM_LINK, user.getToken()));
-        return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     private boolean registerAdmin(@RequestBody User user) {
@@ -68,6 +72,7 @@ public class RegisterController {
 
 
     private String generateToken() {
+        logger.info("Generating token used for confirmation");
         return new BigInteger(130, tokenGenerator).toString(32);
     }
 
@@ -81,6 +86,7 @@ public class RegisterController {
         admin.setAge(user.getAge());
         admin.setUserType(UserType.ADMIN);
         admin.setConfirmed(user.getConfirmed());
+        admin.setToken(user.getToken());
 
         return admin;
     }
@@ -95,6 +101,7 @@ public class RegisterController {
         client.setAge(user.getAge());
         client.setUserType(UserType.CLIENT);
         client.setConfirmed(user.getConfirmed());
+        client.setToken(user.getToken());
 
         return client;
     }
