@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
 @RestController
 public class RegisterController {
 
@@ -24,32 +27,48 @@ public class RegisterController {
     private AdminService adminService;
     private ClientService clientService;
     private MailService mailService;
+    private SecureRandom tokenGenerator;
 
     @Autowired
     public RegisterController(AdminService adminService, ClientService clientService, MailService mailService) {
         this.adminService = adminService;
         this.clientService = clientService;
         this.mailService = mailService;
+        tokenGenerator = new SecureRandom();
     }
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
         HttpHeaders httpHeaders = new HttpHeaders();
+        user.setToken(generateToken());
 
         if (UserType.ADMIN == user.getUserType()) {
-            Admin admin = convertUserToAdmin(user);
-            if (adminService.save(admin) == null) {
+            if (registerAdmin(user)) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
         } else {
-            Client client = convertUserToClient(user);
-            if (clientService.save(client) == null) {
+            if (registerClient(user)) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
         }
 
-        mailService.sendMail(user.getEmail(), CONFIRMATION_MAIL_SUBJECT, String.format(USER_CONFIRM_LINK, user.getEmail()));
+        mailService.sendMail(user.getEmail(), CONFIRMATION_MAIL_SUBJECT, String.format(USER_CONFIRM_LINK, user.getToken()));
         return new ResponseEntity<>(user, httpHeaders, HttpStatus.CREATED);
+    }
+
+    private boolean registerAdmin(@RequestBody User user) {
+        Admin admin = convertUserToAdmin(user);
+        return adminService.save(admin) == null;
+    }
+
+    private boolean registerClient(@RequestBody User user) {
+        Client client = convertUserToClient(user);
+        return clientService.save(client) == null;
+    }
+
+
+    private String generateToken() {
+        return new BigInteger(130, tokenGenerator).toString(32);
     }
 
     private Admin convertUserToAdmin(User user) {

@@ -32,6 +32,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByToken(String token) {
+        return userDao.findByToken(token);
+    }
+
+    @Override
     public User save(User user) {
         if (findByEmail(user.getEmail()) != null) {
             return null;

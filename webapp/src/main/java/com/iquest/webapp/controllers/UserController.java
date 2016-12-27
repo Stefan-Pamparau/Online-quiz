@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
@@ -22,23 +26,18 @@ public class UserController {
         this.mailService = mailService;
     }
 
-    @PostMapping("/confirm/{email}")
-    public ResponseEntity<User> confirmUser(@PathVariable("email") String userEmail) {
-        User user = userService.findByEmail(appendEmailDomain(userEmail));
-        HttpHeaders httpHeaders = new HttpHeaders();
+    @PostMapping("/confirm/{token}")
+    public ResponseEntity<User> confirmUser(@PathVariable("token") String token) {
+        User user = userService.findByToken(token);
 
         if (user == null) {
-            return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         user.setConfirmed(true);
         userService.save(user);
 
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-
-    private String appendEmailDomain(String userEmail) {
-        return userEmail + ".com";
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping("delete/all")

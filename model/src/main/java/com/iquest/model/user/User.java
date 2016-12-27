@@ -23,6 +23,7 @@ public class User {
     private String email;
     private String password;
     private Boolean confirmed = false;
+    private String token;
 
     @Column(name = "user_type", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
@@ -118,6 +119,14 @@ public class User {
         this.friendships = friendships;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -132,6 +141,7 @@ public class User {
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
         if (confirmed != null ? !confirmed.equals(user.confirmed) : user.confirmed != null) return false;
+        if (token != null ? !token.equals(user.token) : user.token != null) return false;
         return userType == user.userType;
 
     }
@@ -145,6 +155,7 @@ public class User {
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (confirmed != null ? confirmed.hashCode() : 0);
+        result = 31 * result + (token != null ? token.hashCode() : 0);
         result = 31 * result + (userType != null ? userType.hashCode() : 0);
         return result;
     }

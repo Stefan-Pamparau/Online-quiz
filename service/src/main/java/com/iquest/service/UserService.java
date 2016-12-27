@@ -7,22 +7,31 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * Returns all users with a given email and password.
+     * Returns an user with a given email and password.
      *
      * @param email    email of user
      * @param password password of user
-     * @return all users with a given email and password
+     * @return an user with a given email and password or null if not found
      */
     User findByEmailAndPassword(String email, String password);
 
 
     /**
-     * Returns all users with a given email.
+     * Returns an user with a given email.
      *
      * @param email email of user
-     * @return all users with a given email
+     * @return user with a given email or null if not found
      */
     User findByEmail(String email);
+
+
+    /**
+     * Returns an user with a given token.
+     *
+     * @param token token of the user
+     * @return user with a given token or null if not found
+     */
+    User findByToken(String token);
 
     /**
      * Saves a given user.
@@ -40,6 +49,7 @@ public interface UserService {
      * @throws IllegalArgumentException if {@code id} is {@literal null}
      */
     User findWithId(Integer id);
+
 
     /**
      * Returns whether an user with the given id exists.
