@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/admin")
-public class AdminController extends AbstractController {
+public class AdminController {
 
     private final AdminService adminService;
 

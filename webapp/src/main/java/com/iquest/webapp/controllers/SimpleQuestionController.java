@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/simpleQuestion")
-public class SimpleQuestionController extends AbstractController {
+public class SimpleQuestionController {
 
     private final SimpleQuestionService simpleQuestionService;
 

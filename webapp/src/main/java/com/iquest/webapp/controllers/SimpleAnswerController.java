@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/simpleAnswer")
-public class SimpleAnswerController extends AbstractController {
+public class SimpleAnswerController {
 
     private final SimpleAnswerService simpleAnswerService;
 

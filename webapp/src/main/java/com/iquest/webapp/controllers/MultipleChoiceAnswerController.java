@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/multipleChoiceAnswer")
-public class MultipleChoiceAnswerController extends AbstractController {
+public class MultipleChoiceAnswerController {
 
     private final MultipleChoiceAnswerService multipleChoiceAnswerService;
 

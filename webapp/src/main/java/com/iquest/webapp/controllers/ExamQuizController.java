@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/examQuiz")
-public class ExamQuizController extends AbstractController {
+public class ExamQuizController {
 
     private final ExamQuizService examQuizService;
 

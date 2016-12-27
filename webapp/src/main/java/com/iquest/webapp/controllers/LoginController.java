@@ -1,9 +1,6 @@
 package com.iquest.webapp.controllers;
 
-import com.iquest.model.user.Admin;
-import com.iquest.model.user.Client;
 import com.iquest.model.user.User;
-import com.iquest.model.user.UserType;
 import com.iquest.service.AdminService;
 import com.iquest.service.ClientService;
 import com.iquest.service.UserService;
@@ -17,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class LoginController extends AbstractController {
+public class LoginController {
 
     private UserService userService;
     private AdminService adminService;
@@ -34,13 +31,6 @@ public class LoginController extends AbstractController {
     public ResponseEntity<User> login(HttpServletRequest request, @RequestBody LoginDto loginDto) {
         User user = userService.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
         if (user != null) {
-            if (UserType.ADMIN == user.getUserType()) {
-                Admin admin = adminService.findByEmail(loginDto.getEmail());
-                request.getSession(true).setAttribute(LOGGED_USER_KEY, admin);
-            } else {
-                Client client = clientService.findByEmail(loginDto.getEmail());
-                request.getSession(true).setAttribute(LOGGED_USER_KEY, client);
-            }
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
