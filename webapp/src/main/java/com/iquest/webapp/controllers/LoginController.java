@@ -8,11 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -30,7 +32,7 @@ public class LoginController {
         User user = userService.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
         if (user != null) {
             logger.info(String.format("Login with credentials %s successful", loginDto));
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
         logger.info(String.format("Login with credentials %s unsuccessful", loginDto));
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
