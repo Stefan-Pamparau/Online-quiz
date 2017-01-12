@@ -3,6 +3,8 @@ package com.iquest.webapp.controllers;
 import com.iquest.model.user.User;
 import com.iquest.service.UserService;
 import com.iquest.webapp.dto.LoginDto;
+import com.iquest.webapp.dto.frommodel.UserDto;
+import com.iquest.webapp.util.ModelToDtoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,12 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<UserDto> login(@RequestBody LoginDto loginDto) {
         logger.info(String.format("Attempting to login with credentials %s", loginDto));
         User user = userService.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
         if (user != null) {
             logger.info(String.format("Login with credentials %s successful", loginDto));
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return new ResponseEntity<>(ModelToDtoConverter.convertToUserDto(user), HttpStatus.OK);
         }
         logger.info(String.format("Login with credentials %s unsuccessful", loginDto));
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -7,6 +7,9 @@ import com.iquest.model.user.UserType;
 import com.iquest.service.AdminService;
 import com.iquest.service.ClientService;
 import com.iquest.service.MailService;
+import com.iquest.webapp.dto.frommodel.UserDto;
+import com.iquest.webapp.util.DtoToModelConverter;
+import com.iquest.webapp.util.ModelToDtoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +45,8 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
+    public ResponseEntity<UserDto> register(@RequestBody UserDto userDto) {
+        User user = DtoToModelConverter.convertUserDto(userDto);
         user.setToken(generateToken());
 
         if (UserType.ADMIN == user.getUserType()) {
@@ -59,7 +63,7 @@ public class RegisterController {
 
         logger.info(String.format("Sending confirmation email to %s", user.getEmail()));
         mailService.sendMail(user.getEmail(), CONFIRMATION_MAIL_SUBJECT, String.format(USER_CONFIRM_LINK, user.getToken()));
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(ModelToDtoConverter.convertToUserDto(user), HttpStatus.CREATED);
     }
 
     private boolean registerAdmin(@RequestBody User user) {
