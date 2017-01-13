@@ -19,7 +19,7 @@ import com.iquest.webapp.dto.frommodel.UserDto;
 
 public class DtoToModelConverter {
 
-    public static ExamQuiz convertToExamQuizDto(ExamQuizDto examQuizDto) {
+    public static ExamQuiz convertToExamQuiz(ExamQuizDto examQuizDto) {
         ExamQuiz examQuiz = new ExamQuiz();
 
         examQuiz.setId(examQuizDto.getId());
@@ -28,7 +28,7 @@ public class DtoToModelConverter {
         return examQuiz;
     }
 
-    public static GamefiedQuiz convertToGamefiedQuizDto(GamefiedQuizDto gamefiedQuizDto) {
+    public static GamefiedQuiz convertToGamefiedQuiz(GamefiedQuizDto gamefiedQuizDto) {
         GamefiedQuiz gamefiedQuiz = new GamefiedQuiz();
 
         gamefiedQuiz.setId(gamefiedQuizDto.getId());
@@ -87,7 +87,7 @@ public class DtoToModelConverter {
         return simpleQuestion;
     }
 
-    public static User convertUserDto(UserDto userDto) {
+    public static User convertToUser(UserDto userDto) {
         User user = new User();
 
         user.setId(userDto.getId());

@@ -1,7 +1,17 @@
 package com.iquest.webapp.controllers;
 
 import com.iquest.model.quiz.ExamQuiz;
+import com.iquest.model.quiz.answer.SimpleAnswer;
+import com.iquest.model.quiz.question.SimpleQuestion;
+import com.iquest.model.user.Client;
+import com.iquest.service.ClientService;
 import com.iquest.service.ExamQuizService;
+import com.iquest.webapp.dto.SimpleQuestionAndAnswerDto;
+import com.iquest.webapp.dto.frommodel.ExamQuizDto;
+import com.iquest.webapp.sessionmanagement.Session;
+import com.iquest.webapp.sessionmanagement.SessionMap;
+import com.iquest.webapp.util.DtoToModelConverter;
+import com.iquest.webapp.util.ModelToDtoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,10 +41,12 @@ public class ExamQuizController {
     private static final Logger logger = LoggerFactory.getLogger(ExamQuizController.class);
 
     private ExamQuizService examQuizService;
+    private ClientService clientService;
 
     @Autowired
-    public ExamQuizController(ExamQuizService examQuizService) {
+    public ExamQuizController(ExamQuizService examQuizService, ClientService clientService) {
         this.examQuizService = examQuizService;
+        this.clientService = clientService;
     }
 
     @GetMapping("/get/all")
@@ -61,14 +75,13 @@ public class ExamQuizController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<ExamQuiz> insertExamQuiz(@RequestBody ExamQuiz examQuiz) {
-        logger.info(String.format("Inserting exam quiz %s", examQuiz));
+    public ResponseEntity<ExamQuizDto> insertExamQuiz(@RequestBody ExamQuizDto examQuizDto) {
+        ExamQuiz examQuiz = saveExamQuiz(examQuizDto);
 
-        examQuizService.save(examQuiz);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentContextPath().path("examQuiz/get/{id}").buildAndExpand(examQuiz.getId()).toUri());
 
-        return new ResponseEntity<>(examQuiz, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(ModelToDtoConverter.convertToExamQuizDto(examQuiz), httpHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
@@ -103,5 +116,78 @@ public class ExamQuizController {
         logger.info("Deleting all exam quizzes");
         examQuizService.deleteAll();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/startExamQuizCreation")
+    public ResponseEntity<Void> startExamQuizCreation(@RequestBody ExamQuizDto examQuizDto, HttpServletRequest request) {
+        String email = request.getUserPrincipal().getName();
+        Session session = getUserSession(email);
+        ExamQuiz examQuiz = saveExamQuiz(examQuizDto);
+        updateSession(email, session, examQuiz);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void updateSession(String email, Session session, ExamQuiz examQuiz) {
+        session.setExamQuiz(examQuiz);
+        SessionMap.getInstance().put(email, session);
+    }
+
+    private ExamQuiz saveExamQuiz(@RequestBody ExamQuizDto examQuizDto) {
+        ExamQuiz examQuiz = DtoToModelConverter.convertToExamQuiz(examQuizDto);
+        logger.info(String.format("Inserting exam quiz %s", examQuiz));
+        examQuizService.save(examQuiz);
+
+        return examQuiz;
+    }
+
+    private Session getUserSession(String email) {
+        Session session = SessionMap.getInstance().get(email);
+        if (session == null) {
+            session = new Session();
+        }
+        return session;
+    }
+
+    @PutMapping("/addQuestionAndAnswer")
+    public ResponseEntity<Void> addQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
+        localAddQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/finishExamQuizCreation")
+    public ResponseEntity<Void> finishExamQuizCreation(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
+        localAddQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void localAddQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
+        String email = httpServletRequest.getUserPrincipal().getName();
+        ExamQuiz examQuiz = SessionMap.getInstance().get(email).getExamQuiz();
+        Client client = clientService.findByEmail(email);
+        SimpleQuestion simpleQuestion = prepareQuestionAndAnswerForInsert(simpleQuestionAndAnswerDto, examQuiz, client);
+
+        saveExamQuiz(examQuiz, client, simpleQuestion);
+    }
+
+    private SimpleQuestion prepareQuestionAndAnswerForInsert(SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, ExamQuiz examQuiz, Client client) {
+        SimpleQuestion simpleQuestion = DtoToModelConverter.convertToSimpleQuestion(simpleQuestionAndAnswerDto.getSimpleQuestionDto());
+        SimpleAnswer simpleAnswer = DtoToModelConverter.convertToSimpleAnswer(simpleQuestionAndAnswerDto.getSimpleAnswerDto());
+        simpleAnswer.setQuestion(simpleQuestion);
+        simpleQuestion.setAnswer(simpleAnswer);
+        simpleQuestion.setQuiz(examQuiz);
+        simpleQuestion.setClient(client);
+        return simpleQuestion;
+    }
+
+    private void saveExamQuiz(ExamQuiz examQuiz, Client client, SimpleQuestion simpleQuestion) {
+        examQuiz.setClient(client);
+        if (examQuiz.getQuestions() == null) {
+            examQuiz.setQuestions(new ArrayList<>());
+        }
+        examQuiz.getQuestions().add(simpleQuestion);
+        examQuizService.save(examQuiz);
     }
 }

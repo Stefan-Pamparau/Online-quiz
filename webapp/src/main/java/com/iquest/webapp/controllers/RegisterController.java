@@ -46,7 +46,7 @@ public class RegisterController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@RequestBody UserDto userDto) {
-        User user = DtoToModelConverter.convertUserDto(userDto);
+        User user = DtoToModelConverter.convertToUser(userDto);
         user.setToken(generateToken());
 
         if (UserType.ADMIN == user.getUserType()) {

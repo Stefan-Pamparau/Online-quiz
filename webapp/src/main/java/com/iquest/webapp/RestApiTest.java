@@ -129,7 +129,8 @@ public class RestApiTest {
 
         Client client = createClient();
         HttpEntity<Client> clientHttpEntity = new HttpEntity<>(client, getAuthorizingHeaders());
-        client = restTemplate.postForObject(SERVER_URL + "/client/insert", clientHttpEntity, Client.class);
+        client = restTemplate.postForObject(SERVER_URL + "/register", clientHttpEntity, Client.class);
+        client = restTemplate.postForObject(SERVER_URL + "/user/confirm/" + client.getToken(), clientHttpEntity, Client.class);
 
         GamefiedQuiz gamefiedQuiz = createGamefiedQuiz(client, null);
         HttpEntity<GamefiedQuiz> gamefiedQuizHttpEntity = new HttpEntity<>(gamefiedQuiz, getAuthorizingHeaders());

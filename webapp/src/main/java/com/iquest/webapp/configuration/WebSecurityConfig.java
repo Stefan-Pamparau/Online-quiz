@@ -6,6 +6,7 @@ import com.iquest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,6 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String ADMIN_AUTHORITY = "ADMIN";
     private static final String ADMIN_OR_CLIENT_AUTHORITY = "ADMIN, CLIENT";
+
     private UserService userService;
 
     @Autowired
@@ -34,15 +36,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority(ADMIN_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/admin/**").permitAll()
                 .antMatchers("/client/**").hasAuthority(ADMIN_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/client/**").permitAll()
                 .antMatchers("/examQuiz/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/examQuiz/**").permitAll()
                 .antMatchers("/gamefiedQuiz/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/gamefiedQuiz/**").permitAll()
                 .antMatchers("/lobby/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/lobby/**").permitAll()
                 .antMatchers("/multipleChoiceAnswer/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/multipleChoiceAnswer/**").permitAll()
                 .antMatchers("/multipleChoiceQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/multipleChoiceQuestion/**").permitAll()
                 .antMatchers("/simpleAnswer/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/simpleAnswer/**").permitAll()
                 .antMatchers("/simpleQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/simpleQuestion/**").permitAll()
                 .antMatchers("/reports/**").hasAuthority(ADMIN_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/reports/**").permitAll()
                 .and().httpBasic()
                 .and().csrf().disable();
     }

@@ -1,14 +1,16 @@
 package com.iquest.webapp.sessionmanagement;
 
 import com.iquest.model.Lobby;
-import com.iquest.model.quiz.Quiz;
+import com.iquest.model.quiz.ExamQuiz;
+import com.iquest.model.quiz.GamefiedQuiz;
 import com.iquest.model.user.User;
 
 public class Session {
 
     private User user;
     private Lobby lobby;
-    private Quiz quiz;
+    private GamefiedQuiz gamefiedQuiz;
+    private ExamQuiz examQuiz;
 
     public User getUser() {
         return user;
@@ -26,32 +28,19 @@ public class Session {
         this.lobby = lobby;
     }
 
-    public Quiz getQuiz() {
-        return quiz;
+    public GamefiedQuiz getGamefiedQuiz() {
+        return gamefiedQuiz;
     }
 
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
+    public void setGamefiedQuiz(GamefiedQuiz gamefiedQuiz) {
+        this.gamefiedQuiz = gamefiedQuiz;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Session session = (Session) o;
-
-        if (user != null ? !user.equals(session.user) : session.user != null) return false;
-        if (lobby != null ? !lobby.equals(session.lobby) : session.lobby != null) return false;
-        return quiz != null ? quiz.equals(session.quiz) : session.quiz == null;
-
+    public ExamQuiz getExamQuiz() {
+        return examQuiz;
     }
 
-    @Override
-    public int hashCode() {
-        int result = user != null ? user.hashCode() : 0;
-        result = 31 * result + (lobby != null ? lobby.hashCode() : 0);
-        result = 31 * result + (quiz != null ? quiz.hashCode() : 0);
-        return result;
+    public void setExamQuiz(ExamQuiz examQuiz) {
+        this.examQuiz = examQuiz;
     }
 }

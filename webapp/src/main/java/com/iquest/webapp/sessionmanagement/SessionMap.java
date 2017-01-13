@@ -13,7 +13,7 @@ public class SessionMap {
         sessionMap = new ConcurrentHashMap<>();
     }
 
-    public synchronized SessionMap getInstance() {
+    public static synchronized SessionMap getInstance() {
         if (instance == null) {
             instance = new SessionMap();
         }
@@ -21,11 +21,11 @@ public class SessionMap {
         return instance;
     }
 
-    public static Session get(String key) {
+    public Session get(String key) {
         return sessionMap.get(key);
     }
 
-    public static void put(String key, Session session) {
+    public void put(String key, Session session) {
         sessionMap.put(key, session);
     }
 }
