@@ -76,7 +76,9 @@ public class ExamQuizController {
 
     @PostMapping("/insert")
     public ResponseEntity<ExamQuizDto> insertExamQuiz(@RequestBody ExamQuizDto examQuizDto) {
-        ExamQuiz examQuiz = saveExamQuiz(examQuizDto);
+        ExamQuiz examQuiz = DtoToModelConverter.convertToExamQuiz(examQuizDto);
+        logger.info(String.format("Inserting exam quiz %s", examQuiz));
+        examQuizService.save(examQuiz);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentContextPath().path("examQuiz/get/{id}").buildAndExpand(examQuiz.getId()).toUri());
@@ -122,23 +124,10 @@ public class ExamQuizController {
     public ResponseEntity<Void> startExamQuizCreation(@RequestBody ExamQuizDto examQuizDto, HttpServletRequest request) {
         String email = request.getUserPrincipal().getName();
         Session session = getUserSession(email);
-        ExamQuiz examQuiz = saveExamQuiz(examQuizDto);
+        ExamQuiz examQuiz = DtoToModelConverter.convertToExamQuiz(examQuizDto);
         updateSession(email, session, examQuiz);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private void updateSession(String email, Session session, ExamQuiz examQuiz) {
-        session.setExamQuiz(examQuiz);
-        SessionMap.getInstance().put(email, session);
-    }
-
-    private ExamQuiz saveExamQuiz(@RequestBody ExamQuizDto examQuizDto) {
-        ExamQuiz examQuiz = DtoToModelConverter.convertToExamQuiz(examQuizDto);
-        logger.info(String.format("Inserting exam quiz %s", examQuiz));
-        examQuizService.save(examQuiz);
-
-        return examQuiz;
     }
 
     private Session getUserSession(String email) {
@@ -149,30 +138,37 @@ public class ExamQuizController {
         return session;
     }
 
+    private void updateSession(String email, Session session, ExamQuiz examQuiz) {
+        session.setExamQuiz(examQuiz);
+        SessionMap.getInstance().put(email, session);
+    }
+
     @PutMapping("/addQuestionAndAnswer")
     public ResponseEntity<Void> addQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
-        localAddQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
+        addSessionQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/finishExamQuizCreation")
+    @PostMapping("/finishExamQuizCreation")
     public ResponseEntity<Void> finishExamQuizCreation(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
-        localAddQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
+        addSessionQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
+        saveSessionExamQuiz(httpServletRequest);
+        removeUserSession(httpServletRequest);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void localAddQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
+    private void addSessionQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
         String email = httpServletRequest.getUserPrincipal().getName();
         ExamQuiz examQuiz = SessionMap.getInstance().get(email).getExamQuiz();
         Client client = clientService.findByEmail(email);
-        SimpleQuestion simpleQuestion = prepareQuestionAndAnswerForInsert(simpleQuestionAndAnswerDto, examQuiz, client);
+        SimpleQuestion simpleQuestion = prepareQuestionAndAnswerForInsertion(simpleQuestionAndAnswerDto, examQuiz, client);
 
-        saveExamQuiz(examQuiz, client, simpleQuestion);
+        updateSessionExamQuiz(examQuiz, client, simpleQuestion);
     }
 
-    private SimpleQuestion prepareQuestionAndAnswerForInsert(SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, ExamQuiz examQuiz, Client client) {
+    private SimpleQuestion prepareQuestionAndAnswerForInsertion(SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, ExamQuiz examQuiz, Client client) {
         SimpleQuestion simpleQuestion = DtoToModelConverter.convertToSimpleQuestion(simpleQuestionAndAnswerDto.getSimpleQuestionDto());
         SimpleAnswer simpleAnswer = DtoToModelConverter.convertToSimpleAnswer(simpleQuestionAndAnswerDto.getSimpleAnswerDto());
         simpleAnswer.setQuestion(simpleQuestion);
@@ -182,12 +178,22 @@ public class ExamQuizController {
         return simpleQuestion;
     }
 
-    private void saveExamQuiz(ExamQuiz examQuiz, Client client, SimpleQuestion simpleQuestion) {
+    private void updateSessionExamQuiz(ExamQuiz examQuiz, Client client, SimpleQuestion simpleQuestion) {
         examQuiz.setClient(client);
         if (examQuiz.getQuestions() == null) {
             examQuiz.setQuestions(new ArrayList<>());
         }
         examQuiz.getQuestions().add(simpleQuestion);
+    }
+
+    private void saveSessionExamQuiz(HttpServletRequest httpServletRequest) {
+        String email = httpServletRequest.getUserPrincipal().getName();
+        ExamQuiz examQuiz = SessionMap.getInstance().get(email).getExamQuiz();
         examQuizService.save(examQuiz);
+    }
+
+    private void removeUserSession(HttpServletRequest httpServletRequest) {
+        String email = httpServletRequest.getUserPrincipal().getName();
+        SessionMap.getInstance().remove(email);
     }
 }

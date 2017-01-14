@@ -28,4 +28,8 @@ public class SessionMap {
     public void put(String key, Session session) {
         sessionMap.put(key, session);
     }
+
+    public void remove(String key) {
+        sessionMap.remove(key);
+    }
 }
