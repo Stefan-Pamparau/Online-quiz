@@ -127,12 +127,12 @@ public class ExamQuizController extends AbstractController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Session session = getUserSession(email);
         ExamQuiz examQuiz = DtoToModelConverter.convertToExamQuiz(examQuizDto);
-        updateSession(email, session, examQuiz);
+        updateSessionWithExamQuiz(email, session, examQuiz);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void updateSession(String email, Session session, ExamQuiz examQuiz) {
+    private void updateSessionWithExamQuiz(String email, Session session, ExamQuiz examQuiz) {
         session.setExamQuiz(examQuiz);
         SessionMap.getInstance().put(email, session);
     }
@@ -194,11 +194,16 @@ public class ExamQuizController extends AbstractController {
     @GetMapping("/get/withQuestions/{quizId}")
     public ResponseEntity<ExamQuizWithQuestionsDto> getExamQuizWithQuestions(@PathVariable("quizId") Integer quizId) {
         ExamQuiz examQuiz = examQuizService.findWithId(quizId);
-
         if (examQuiz == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        ExamQuizWithQuestionsDto examQuizWithQuestionsDto = contructExamQuizWithQuestionsDto(examQuiz);
+
+        return new ResponseEntity<ExamQuizWithQuestionsDto>(examQuizWithQuestionsDto, HttpStatus.OK);
+    }
+
+    private ExamQuizWithQuestionsDto contructExamQuizWithQuestionsDto(ExamQuiz examQuiz) {
         ExamQuizWithQuestionsDto examQuizWithQuestionsDto = new ExamQuizWithQuestionsDto();
         examQuizWithQuestionsDto.setExamQuizDto(ModelToDtoConverter.convertToExamQuizDto(examQuiz));
         examQuizWithQuestionsDto.setSimpleQuestionDtos(new ArrayList<>());
@@ -206,7 +211,6 @@ public class ExamQuizController extends AbstractController {
         examQuiz.getQuestions().stream()
                 .filter(question -> QuestionType.SIMPLE_QUESTION == question.getQuestionType())
                 .forEach(question -> examQuizWithQuestionsDto.getSimpleQuestionDtos().add(ModelToDtoConverter.convertToSimpleQuestionDto(question)));
-
-        return new ResponseEntity<ExamQuizWithQuestionsDto>(examQuizWithQuestionsDto, HttpStatus.OK);
+        return examQuizWithQuestionsDto;
     }
 }

@@ -48,21 +48,34 @@ public class ReportController extends AbstractController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        ClientReportDto clientReportDto = constructClientReportDto(client);
+
+        return new ResponseEntity<>(clientReportDto, HttpStatus.ACCEPTED);
+    }
+
+    private ClientReportDto constructClientReportDto(Client client) {
         ClientReportDto clientReportDto = new ClientReportDto();
         clientReportDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
 
+        initializeClientReportQuizzesPerMonth(clientReportDto);
+
+        setClientReportQuizzesPerMonth(client, clientReportDto);
+        return clientReportDto;
+    }
+
+    private void initializeClientReportQuizzesPerMonth(ClientReportDto clientReportDto) {
         clientReportDto.setQuizzesPerMonth(new ArrayList<>());
         for(int month = 0; month < 12; month++) {
             clientReportDto.getQuizzesPerMonth().add(0);
         }
+    }
 
+    private void setClientReportQuizzesPerMonth(Client client, ClientReportDto clientReportDto) {
         List<UserLobbySession> quizzesPlayed = client.getLobbies();
         for(UserLobbySession userLobbySession : quizzesPlayed) {
             int quizMonth = userLobbySession.getLobby().getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue() - 1;
             clientReportDto.getQuizzesPerMonth().set(quizMonth, clientReportDto.getQuizzesPerMonth().get(quizMonth) + 1);
         }
-
-        return new ResponseEntity<>(clientReportDto, HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/lobbyReport/{id}")

@@ -127,8 +127,15 @@ public class LobbyController extends AbstractController {
         if (quiz == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Lobby lobby = constructSessionLobby(quiz, email);
+        updateSessionWithLobby(email, lobby);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private Lobby constructSessionLobby(Quiz quiz, String email) {
         Lobby lobby = new Lobby();
         lobby.setUsers(new ArrayList<>());
         UserLobbySession userLobbySession = new UserLobbySession();
@@ -138,11 +145,13 @@ public class LobbyController extends AbstractController {
         lobby.getUsers().add(userLobbySession);
         lobby.setCreationDate(new Date());
         lobby.setQuiz(quiz);
+        return lobby;
+    }
+
+    private void updateSessionWithLobby(String email, Lobby lobby) {
         Session session = getUserSession(email);
         session.setLobby(lobby);
         SessionMap.getInstance().put(email, session);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/getSessionLobby")

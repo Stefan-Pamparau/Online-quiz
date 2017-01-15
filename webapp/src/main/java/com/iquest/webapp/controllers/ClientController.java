@@ -138,6 +138,12 @@ public class ClientController extends AbstractController {
             return new ResponseEntity<ClientWithQuizzesDto>(HttpStatus.NOT_FOUND);
         }
 
+        ClientWithQuizzesDto clientWithQuizzesDto = constructClientWithQuizzesDto(client);
+
+        return new ResponseEntity<ClientWithQuizzesDto>(clientWithQuizzesDto, HttpStatus.OK);
+    }
+
+    private ClientWithQuizzesDto constructClientWithQuizzesDto(Client client) {
         ClientWithQuizzesDto clientWithQuizzesDto = new ClientWithQuizzesDto();
         clientWithQuizzesDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
         clientWithQuizzesDto.setExamQuizDtos(new ArrayList<>());
@@ -150,7 +156,6 @@ public class ClientController extends AbstractController {
                 clientWithQuizzesDto.getGamefiedQuizDtos().add(ModelToDtoConverter.convertToGamefiedQuizDto(quiz));
             }
         }
-
-        return new ResponseEntity<ClientWithQuizzesDto>(clientWithQuizzesDto, HttpStatus.OK);
+        return clientWithQuizzesDto;
     }
 }

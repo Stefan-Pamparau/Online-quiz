@@ -121,12 +121,16 @@ public class SimpleAnswerController extends AbstractController {
         Session session = SessionMap.getInstance().get(email);
         SimpleQuestion simpleQuestion = simpleQuestionService.findWithId(clientSimpleAnswerDto.getSimpleQuestionDto().getId());
 
+        checkAnswer(clientSimpleAnswerDto, email, session, simpleQuestion);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void checkAnswer(ClientSimpleAnswerDto clientSimpleAnswerDto, String email, Session session, SimpleQuestion simpleQuestion) {
         if (simpleQuestion.getAnswer().getAnswerText().equals(clientSimpleAnswerDto.getAnswerText())) {
             session.getLobby().getUsers().stream()
                     .filter(userLobbySession -> userLobbySession.getUser().getEmail().equals(email))
                     .forEach(userLobbySession -> userLobbySession.setScore(userLobbySession.getScore() + 5));
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

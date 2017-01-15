@@ -28,7 +28,6 @@ public class QuizController {
     @GetMapping("/get/{quizId}")
     public ResponseEntity<QuizDto> getQuizWithId(@PathVariable("quizId") Integer quizId) {
         Quiz quiz = quizService.findWithId(quizId);
-
         if (quiz == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
