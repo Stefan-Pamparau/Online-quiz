@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/examQuiz")
 @CrossOrigin(origins = "*")
-public class ExamQuizController {
+public class ExamQuizController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ExamQuizController.class);
 
@@ -121,21 +122,13 @@ public class ExamQuizController {
     }
 
     @PostMapping("/startExamQuizCreation")
-    public ResponseEntity<Void> startExamQuizCreation(@RequestBody ExamQuizDto examQuizDto, HttpServletRequest request) {
-        String email = request.getUserPrincipal().getName();
+    public ResponseEntity<Void> startExamQuizCreation(@RequestBody ExamQuizDto examQuizDto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Session session = getUserSession(email);
         ExamQuiz examQuiz = DtoToModelConverter.convertToExamQuiz(examQuizDto);
         updateSession(email, session, examQuiz);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private Session getUserSession(String email) {
-        Session session = SessionMap.getInstance().get(email);
-        if (session == null) {
-            session = new Session();
-        }
-        return session;
     }
 
     private void updateSession(String email, Session session, ExamQuiz examQuiz) {
@@ -144,23 +137,23 @@ public class ExamQuizController {
     }
 
     @PutMapping("/addQuestionAndAnswer")
-    public ResponseEntity<Void> addQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
-        addSessionQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
+    public ResponseEntity<Void> addQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto) {
+        addSessionQuestionAndAnswer(simpleQuestionAndAnswerDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/finishExamQuizCreation")
-    public ResponseEntity<Void> finishExamQuizCreation(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
-        addSessionQuestionAndAnswer(simpleQuestionAndAnswerDto, httpServletRequest);
-        saveSessionExamQuiz(httpServletRequest);
-        removeUserSession(httpServletRequest);
+    public ResponseEntity<Void> finishExamQuizCreation(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto) {
+        addSessionQuestionAndAnswer(simpleQuestionAndAnswerDto);
+        saveSessionExamQuiz();
+        removeUserSession();
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void addSessionQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto, HttpServletRequest httpServletRequest) {
-        String email = httpServletRequest.getUserPrincipal().getName();
+    private void addSessionQuestionAndAnswer(@RequestBody SimpleQuestionAndAnswerDto simpleQuestionAndAnswerDto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ExamQuiz examQuiz = SessionMap.getInstance().get(email).getExamQuiz();
         Client client = clientService.findByEmail(email);
         SimpleQuestion simpleQuestion = prepareQuestionAndAnswerForInsertion(simpleQuestionAndAnswerDto, examQuiz, client);
@@ -186,14 +179,14 @@ public class ExamQuizController {
         examQuiz.getQuestions().add(simpleQuestion);
     }
 
-    private void saveSessionExamQuiz(HttpServletRequest httpServletRequest) {
-        String email = httpServletRequest.getUserPrincipal().getName();
+    private void saveSessionExamQuiz() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ExamQuiz examQuiz = SessionMap.getInstance().get(email).getExamQuiz();
         examQuizService.save(examQuiz);
     }
 
-    private void removeUserSession(HttpServletRequest httpServletRequest) {
-        String email = httpServletRequest.getUserPrincipal().getName();
+    private void removeUserSession() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         SessionMap.getInstance().remove(email);
     }
 }

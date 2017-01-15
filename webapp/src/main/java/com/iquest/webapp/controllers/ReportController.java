@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/reports")
 @CrossOrigin(origins = "*")
-public class ReportController {
+public class ReportController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 

@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/multipleChoiceAnswer")
 @CrossOrigin(origins = "*")
-public class MultipleChoiceAnswerController {
+public class MultipleChoiceAnswerController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(MultipleChoiceAnswerController.class);
 

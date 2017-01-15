@@ -7,7 +7,9 @@ import com.iquest.model.quiz.answer.MultipleChoiceAnswer;
 import com.iquest.model.quiz.answer.SimpleAnswer;
 import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 import com.iquest.model.quiz.question.SimpleQuestion;
+import com.iquest.model.user.Client;
 import com.iquest.model.user.User;
+import com.iquest.webapp.dto.frommodel.ClientDto;
 import com.iquest.webapp.dto.frommodel.ExamQuizDto;
 import com.iquest.webapp.dto.frommodel.GamefiedQuizDto;
 import com.iquest.webapp.dto.frommodel.LobbyDto;
@@ -101,5 +103,21 @@ public class DtoToModelConverter {
         user.setUserType(userDto.getUserType());
 
         return user;
+    }
+
+    public static Client convertToClient(ClientDto clientDto) {
+        Client client = new Client();
+
+        client.setId(clientDto.getId());
+        client.setFirstName(clientDto.getFirstName());
+        client.setSurname(clientDto.getSurname());
+        client.setAge(clientDto.getAge());
+        client.setEmail(clientDto.getEmail());
+        client.setPassword(clientDto.getPassword());
+        client.setConfirmed(clientDto.getConfirmed());
+        client.setToken(clientDto.getToken());
+        client.setUserType(clientDto.getUserType());
+
+        return client;
     }
 }

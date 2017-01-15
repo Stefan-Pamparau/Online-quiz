@@ -37,24 +37,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/admin/**").permitAll()
                 .antMatchers("/admin/**").hasAuthority(ADMIN_AUTHORITY)
+
+                .antMatchers(HttpMethod.OPTIONS, "/client/add/friend").permitAll()
+                .antMatchers("/client/add/friend").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/client/get/clientWithQuizzes").permitAll()
+                .antMatchers("/client/get/clientWithQuizzes").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
                 .antMatchers(HttpMethod.OPTIONS, "/client/**").permitAll()
                 .antMatchers("/client/**").hasAuthority(ADMIN_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/examQuiz/**").permitAll()
                 .antMatchers("/examQuiz/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/gamefiedQuiz/**").permitAll()
                 .antMatchers("/gamefiedQuiz/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/lobby/**").permitAll()
                 .antMatchers("/lobby/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/multipleChoiceAnswer/**").permitAll()
                 .antMatchers("/multipleChoiceAnswer/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/multipleChoiceQuestion/**").permitAll()
                 .antMatchers("/multipleChoiceQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/simpleAnswer/**").permitAll()
                 .antMatchers("/simpleAnswer/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/simpleQuestion/**").permitAll()
                 .antMatchers("/simpleQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+
                 .antMatchers(HttpMethod.OPTIONS, "/reports/**").permitAll()
                 .antMatchers("/reports/**").hasAuthority(ADMIN_AUTHORITY)
+
                 .and().httpBasic()
                 .and().csrf().disable();
     }

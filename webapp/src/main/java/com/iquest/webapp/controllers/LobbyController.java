@@ -1,13 +1,18 @@
 package com.iquest.webapp.controllers;
 
 import com.iquest.model.Lobby;
+import com.iquest.model.quiz.Quiz;
+import com.iquest.service.ClientService;
 import com.iquest.service.LobbyService;
+import com.iquest.service.QuizService;
+import com.iquest.webapp.sessionmanagement.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,20 +24,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/lobby")
 @CrossOrigin(origins = "*")
-public class LobbyController {
+public class LobbyController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(LobbyController.class);
 
     private LobbyService lobbyService;
+    private QuizService quizService;
+    private ClientService clientService;
 
     @Autowired
-    public LobbyController(LobbyService lobbyService) {
+    public LobbyController(LobbyService lobbyService, QuizService quizService, ClientService clientService) {
         this.lobbyService = lobbyService;
+        this.quizService = quizService;
+        this.clientService = clientService;
     }
 
     @GetMapping("/get/all")
@@ -102,6 +114,24 @@ public class LobbyController {
     public ResponseEntity<Void> deleteLobbies() {
         logger.info("Deleting all lobbies");
         lobbyService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("createSessionLobby/{quizId}")
+    public ResponseEntity<Void> createSessionLobby(@PathVariable("quizId") Integer quizId) {
+        Quiz quiz = quizService.findWithId(quizId);
+        if (quiz == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Lobby lobby = new Lobby();
+        lobby.setUsers(new ArrayList<>());
+//        lobby.getUsers().add(clientService.findWithId());
+        lobby.setCreationDate(new Date());
+        lobby.setQuiz(quiz);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Session session = new Session();
+        session.setLobby(lobby);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

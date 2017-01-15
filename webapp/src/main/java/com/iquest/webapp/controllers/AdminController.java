@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/admin")
 @CrossOrigin(origins = "*")
-public class AdminController {
+public class AdminController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 

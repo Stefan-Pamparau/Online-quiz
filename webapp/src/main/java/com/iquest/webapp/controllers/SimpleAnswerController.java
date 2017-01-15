@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/simpleAnswer")
 @CrossOrigin(origins = "*")
-public class SimpleAnswerController {
+public class SimpleAnswerController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleAnswerController.class);
 

@@ -1,7 +1,11 @@
 package com.iquest.webapp.controllers;
 
+import com.iquest.model.quiz.Quiz;
+import com.iquest.model.quiz.QuizType;
 import com.iquest.model.user.Client;
 import com.iquest.service.ClientService;
+import com.iquest.webapp.dto.ClientWithQuizzesDto;
+import com.iquest.webapp.util.ModelToDtoConverter;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +25,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/client")
 @CrossOrigin(origins = "*")
-public class ClientController {
+public class ClientController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientController.class);
 
@@ -114,6 +120,7 @@ public class ClientController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/add/friend")
     public ResponseEntity<Void> addFriend(HttpServletRequest request, @RequestBody Client friend) {
         logger.info(String.format("Adding friend %s", friend));
 
@@ -121,5 +128,29 @@ public class ClientController {
         clientService.addFriend(requester, friend);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/get/clientWithQuizzes")
+    public ResponseEntity<ClientWithQuizzesDto> getClientWithQuizzes() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = clientService.findByEmail(email);
+        if (client == null) {
+            return new ResponseEntity<ClientWithQuizzesDto>(HttpStatus.NOT_FOUND);
+        }
+
+        ClientWithQuizzesDto clientWithQuizzesDto = new ClientWithQuizzesDto();
+        clientWithQuizzesDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
+        clientWithQuizzesDto.setExamQuizDtos(new ArrayList<>());
+        clientWithQuizzesDto.setGamefiedQuizDtos(new ArrayList<>());
+
+        for (Quiz quiz : client.getQuizzes()) {
+            if (QuizType.EXAM_QUIZ == quiz.getQuizType()) {
+                clientWithQuizzesDto.getExamQuizDtos().add(ModelToDtoConverter.convertToExamQuizDto(quiz));
+            } else {
+                clientWithQuizzesDto.getGamefiedQuizDtos().add(ModelToDtoConverter.convertToGamefiedQuizDto(quiz));
+            }
+        }
+
+        return new ResponseEntity<ClientWithQuizzesDto>(clientWithQuizzesDto, HttpStatus.OK);
     }
 }

@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/gamefiedQuiz")
 @CrossOrigin(origins = "*")
-public class GamefiedQuizController {
+public class GamefiedQuizController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(GamefiedQuizController.class);
 
