@@ -70,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/simpleQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
 
                 .antMatchers(HttpMethod.OPTIONS, "/reports/**").permitAll()
-                .antMatchers("/reports/**").hasAuthority(ADMIN_AUTHORITY)
+                .antMatchers("/reports/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
 
                 .and().httpBasic()
                 .and().csrf().disable();
