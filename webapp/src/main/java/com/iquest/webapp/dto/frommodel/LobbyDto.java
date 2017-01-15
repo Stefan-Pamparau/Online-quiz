@@ -6,6 +6,7 @@ public class LobbyDto {
 
     private Integer id;
     private Date creationDate;
+    private Integer secondsUntilStart;
 
     public Integer getId() {
         return id;
@@ -21,5 +22,13 @@ public class LobbyDto {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Integer getSecondsUntilStart() {
+        return secondsUntilStart;
+    }
+
+    public void setSecondsUntilStart(Integer secondsUntilStart) {
+        this.secondsUntilStart = secondsUntilStart;
     }
 }

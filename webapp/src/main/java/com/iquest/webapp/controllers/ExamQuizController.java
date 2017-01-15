@@ -2,10 +2,12 @@ package com.iquest.webapp.controllers;
 
 import com.iquest.model.quiz.ExamQuiz;
 import com.iquest.model.quiz.answer.SimpleAnswer;
+import com.iquest.model.quiz.question.QuestionType;
 import com.iquest.model.quiz.question.SimpleQuestion;
 import com.iquest.model.user.Client;
 import com.iquest.service.ClientService;
 import com.iquest.service.ExamQuizService;
+import com.iquest.webapp.dto.ExamQuizWithQuestionsDto;
 import com.iquest.webapp.dto.SimpleQuestionAndAnswerDto;
 import com.iquest.webapp.dto.frommodel.ExamQuizDto;
 import com.iquest.webapp.sessionmanagement.Session;
@@ -30,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,5 +189,24 @@ public class ExamQuizController extends AbstractController {
     private void removeUserSession() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         SessionMap.getInstance().remove(email);
+    }
+
+    @GetMapping("/get/withQuestions/{quizId}")
+    public ResponseEntity<ExamQuizWithQuestionsDto> getExamQuizWithQuestions(@PathVariable("quizId") Integer quizId) {
+        ExamQuiz examQuiz = examQuizService.findWithId(quizId);
+
+        if (examQuiz == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        ExamQuizWithQuestionsDto examQuizWithQuestionsDto = new ExamQuizWithQuestionsDto();
+        examQuizWithQuestionsDto.setExamQuizDto(ModelToDtoConverter.convertToExamQuizDto(examQuiz));
+        examQuizWithQuestionsDto.setSimpleQuestionDtos(new ArrayList<>());
+
+        examQuiz.getQuestions().stream()
+                .filter(question -> QuestionType.SIMPLE_QUESTION == question.getQuestionType())
+                .forEach(question -> examQuizWithQuestionsDto.getSimpleQuestionDtos().add(ModelToDtoConverter.convertToSimpleQuestionDto(question)));
+
+        return new ResponseEntity<ExamQuizWithQuestionsDto>(examQuizWithQuestionsDto, HttpStatus.OK);
     }
 }

@@ -27,6 +27,9 @@ public class Lobby {
     @OneToOne(optional = false)
     private Quiz quiz;
 
+    @Transient
+    private Integer secondsUntilStart = 15;
+
     public Integer getId() {
         return id;
     }
@@ -57,6 +60,14 @@ public class Lobby {
 
     public void setQuiz(Quiz quiz) {
         this.quiz = quiz;
+    }
+
+    public Integer getSecondsUntilStart() {
+        return secondsUntilStart;
+    }
+
+    public void setSecondsUntilStart(Integer secondsUntilStart) {
+        this.secondsUntilStart = secondsUntilStart;
     }
 
     @Override

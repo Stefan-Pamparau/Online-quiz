@@ -1,13 +1,20 @@
 package com.iquest.webapp.controllers;
 
 import com.iquest.model.quiz.answer.SimpleAnswer;
+import com.iquest.model.quiz.question.SimpleQuestion;
 import com.iquest.service.SimpleAnswerService;
+import com.iquest.service.SimpleQuestionService;
+import com.iquest.webapp.dto.ClientSimpleAnswerDto;
+import com.iquest.webapp.dto.frommodel.SimpleQuestionDto;
+import com.iquest.webapp.sessionmanagement.Session;
+import com.iquest.webapp.sessionmanagement.SessionMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +35,13 @@ public class SimpleAnswerController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleAnswerController.class);
 
-    private final SimpleAnswerService simpleAnswerService;
+    private SimpleAnswerService simpleAnswerService;
+    private SimpleQuestionService simpleQuestionService;
 
     @Autowired
-    public SimpleAnswerController(SimpleAnswerService simpleAnswerService) {
+    public SimpleAnswerController(SimpleAnswerService simpleAnswerService, SimpleQuestionService simpleQuestionService) {
         this.simpleAnswerService = simpleAnswerService;
+        this.simpleQuestionService = simpleQuestionService;
     }
 
     @GetMapping("/get/all")
@@ -102,6 +111,22 @@ public class SimpleAnswerController extends AbstractController {
     public ResponseEntity<Void> deleteAllSimpleAnswers() {
         logger.info("Deleting all simple answers");
         simpleAnswerService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/verifyAnswer")
+    public ResponseEntity<Void> verifyAnswer(@RequestBody ClientSimpleAnswerDto clientSimpleAnswerDto) {
+        SimpleQuestionDto simpleQuestionDto = clientSimpleAnswerDto.getSimpleQuestionDto();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Session session = SessionMap.getInstance().get(email);
+        SimpleQuestion simpleQuestion = simpleQuestionService.findWithId(clientSimpleAnswerDto.getSimpleQuestionDto().getId());
+
+        if (simpleQuestion.getAnswer().getAnswerText().equals(clientSimpleAnswerDto.getAnswerText())) {
+            session.getLobby().getUsers().stream()
+                    .filter(userLobbySession -> userLobbySession.getUser().getEmail().equals(email))
+                    .forEach(userLobbySession -> userLobbySession.setScore(userLobbySession.getScore() + 5));
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -7,6 +7,7 @@ import com.iquest.model.quiz.Quiz;
 import com.iquest.model.quiz.answer.MultipleChoiceAnswer;
 import com.iquest.model.quiz.answer.SimpleAnswer;
 import com.iquest.model.quiz.question.MultipleChoiceQuestion;
+import com.iquest.model.quiz.question.Question;
 import com.iquest.model.quiz.question.SimpleQuestion;
 import com.iquest.model.user.Client;
 import com.iquest.model.user.User;
@@ -16,11 +17,21 @@ import com.iquest.webapp.dto.frommodel.GamefiedQuizDto;
 import com.iquest.webapp.dto.frommodel.LobbyDto;
 import com.iquest.webapp.dto.frommodel.MultipleChoiceAnswerDto;
 import com.iquest.webapp.dto.frommodel.MultipleChoiceQuestionDto;
+import com.iquest.webapp.dto.frommodel.QuizDto;
 import com.iquest.webapp.dto.frommodel.SimpleAnswerDto;
 import com.iquest.webapp.dto.frommodel.SimpleQuestionDto;
 import com.iquest.webapp.dto.frommodel.UserDto;
 
 public class ModelToDtoConverter {
+
+    public static QuizDto convertToQuizDto(Quiz quiz) {
+        QuizDto quizDto = new QuizDto();
+
+        quizDto.setId(quiz.getId());
+        quizDto.setQuizType(quiz.getQuizType());
+
+        return quizDto;
+    }
 
     public static ExamQuizDto convertToExamQuizDto(ExamQuiz examQuiz) {
         ExamQuizDto examQuizDto = new ExamQuizDto();
@@ -45,6 +56,7 @@ public class ModelToDtoConverter {
 
         lobbyDto.setId(lobby.getId());
         lobbyDto.setCreationDate(lobby.getCreationDate());
+        lobbyDto.setSecondsUntilStart(lobby.getSecondsUntilStart());
 
         return lobbyDto;
     }
@@ -81,6 +93,14 @@ public class ModelToDtoConverter {
     }
 
     public static SimpleQuestionDto convertToSimpleQuestionDto(SimpleQuestion simpleQuestion) {
+        return getSimpleQuestionDto(simpleQuestion);
+    }
+
+    public static SimpleQuestionDto convertToSimpleQuestionDto(Question simpleQuestion) {
+        return getSimpleQuestionDto(simpleQuestion);
+    }
+
+    private static SimpleQuestionDto getSimpleQuestionDto(Question simpleQuestion) {
         SimpleQuestionDto simpleQuestionDto = new SimpleQuestionDto();
 
         simpleQuestionDto.setId(simpleQuestion.getId());

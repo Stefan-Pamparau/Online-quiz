@@ -3,6 +3,7 @@ package com.iquest.webapp.util;
 import com.iquest.model.Lobby;
 import com.iquest.model.quiz.ExamQuiz;
 import com.iquest.model.quiz.GamefiedQuiz;
+import com.iquest.model.quiz.Quiz;
 import com.iquest.model.quiz.answer.MultipleChoiceAnswer;
 import com.iquest.model.quiz.answer.SimpleAnswer;
 import com.iquest.model.quiz.question.MultipleChoiceQuestion;
@@ -15,11 +16,21 @@ import com.iquest.webapp.dto.frommodel.GamefiedQuizDto;
 import com.iquest.webapp.dto.frommodel.LobbyDto;
 import com.iquest.webapp.dto.frommodel.MultipleChoiceAnswerDto;
 import com.iquest.webapp.dto.frommodel.MultipleChoiceQuestionDto;
+import com.iquest.webapp.dto.frommodel.QuizDto;
 import com.iquest.webapp.dto.frommodel.SimpleAnswerDto;
 import com.iquest.webapp.dto.frommodel.SimpleQuestionDto;
 import com.iquest.webapp.dto.frommodel.UserDto;
 
 public class DtoToModelConverter {
+
+    public static Quiz convertToQuiz(QuizDto quizDto) {
+        Quiz quiz = new Quiz();
+
+        quiz.setId(quizDto.getId());
+        quiz.setQuizType(quizDto.getQuizType());
+
+        return quiz;
+    }
 
     public static ExamQuiz convertToExamQuiz(ExamQuizDto examQuizDto) {
         ExamQuiz examQuiz = new ExamQuiz();
