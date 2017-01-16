@@ -5,7 +5,7 @@ import com.iquest.webapp.dto.frommodel.ClientDto;
 
 import java.util.List;
 
-public class ClientReportDto {
+public class ClientActivityReportDto {
     private ClientDto clientDto;
     private List<Integer> quizzesPerMonth;
 

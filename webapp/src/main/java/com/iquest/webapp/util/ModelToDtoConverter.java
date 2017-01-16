@@ -153,6 +153,8 @@ public class ModelToDtoConverter {
 
         examQuizDto.setId(quiz.getId());
         examQuizDto.setQuizType(quiz.getQuizType());
+        examQuizDto.setTitle(quiz.getTitle());
+        examQuizDto.setDescription(quiz.getDescription());
 
         return examQuizDto;
     }
@@ -162,6 +164,8 @@ public class ModelToDtoConverter {
 
         gamefiedQuizDto.setId(quiz.getId());
         gamefiedQuizDto.setQuizType(quiz.getQuizType());
+        gamefiedQuizDto.setTitle(quiz.getTitle());
+        gamefiedQuizDto.setDescription(quiz.getDescription());
 
         return gamefiedQuizDto;
     }

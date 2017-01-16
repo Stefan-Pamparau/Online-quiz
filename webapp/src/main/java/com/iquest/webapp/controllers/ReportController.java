@@ -5,7 +5,8 @@ import com.iquest.model.user.Client;
 import com.iquest.model.user.UserLobbySession;
 import com.iquest.service.ClientService;
 import com.iquest.service.LobbyService;
-import com.iquest.webapp.dto.report.ClientReportDto;
+import com.iquest.webapp.dto.report.ClientActivityReportDto;
+import com.iquest.webapp.dto.report.ClientScoreReportDto;
 import com.iquest.webapp.dto.report.LobbyReportDto;
 import com.iquest.webapp.util.ModelToDtoConverter;
 import org.slf4j.Logger;
@@ -40,42 +41,74 @@ public class ReportController extends AbstractController {
         this.lobbyService = lobbyService;
     }
 
-    @GetMapping("/clientReport")
-    public ResponseEntity<ClientReportDto> generateClientReport() {
+    @GetMapping("/clientActivityReport")
+    public ResponseEntity<ClientActivityReportDto> generateClientActivityReport() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientService.findByEmail(email);
         if (client == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        ClientReportDto clientReportDto = constructClientReportDto(client);
+        ClientActivityReportDto clientActivityReportDto = constructClientActivityReportDto(client);
 
-        return new ResponseEntity<>(clientReportDto, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(clientActivityReportDto, HttpStatus.ACCEPTED);
     }
 
-    private ClientReportDto constructClientReportDto(Client client) {
-        ClientReportDto clientReportDto = new ClientReportDto();
-        clientReportDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
+    private ClientActivityReportDto constructClientActivityReportDto(Client client) {
+        ClientActivityReportDto clientActivityReportDto = new ClientActivityReportDto();
+        clientActivityReportDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
+        clientActivityReportDto.setQuizzesPerMonth(initializeClientReportValues());
+        setClientReportQuizzesPerMonth(client, clientActivityReportDto);
 
-        initializeClientReportQuizzesPerMonth(clientReportDto);
-
-        setClientReportQuizzesPerMonth(client, clientReportDto);
-        return clientReportDto;
+        return clientActivityReportDto;
     }
 
-    private void initializeClientReportQuizzesPerMonth(ClientReportDto clientReportDto) {
-        clientReportDto.setQuizzesPerMonth(new ArrayList<>());
-        for(int month = 0; month < 12; month++) {
-            clientReportDto.getQuizzesPerMonth().add(0);
-        }
-    }
-
-    private void setClientReportQuizzesPerMonth(Client client, ClientReportDto clientReportDto) {
+    private void setClientReportQuizzesPerMonth(Client client, ClientActivityReportDto clientActivityReportDto) {
         List<UserLobbySession> quizzesPlayed = client.getLobbies();
-        for(UserLobbySession userLobbySession : quizzesPlayed) {
+        for (UserLobbySession userLobbySession : quizzesPlayed) {
             int quizMonth = userLobbySession.getLobby().getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue() - 1;
-            clientReportDto.getQuizzesPerMonth().set(quizMonth, clientReportDto.getQuizzesPerMonth().get(quizMonth) + 1);
+            clientActivityReportDto.getQuizzesPerMonth().set(quizMonth, clientActivityReportDto.getQuizzesPerMonth().get(quizMonth) + 1);
         }
+    }
+
+    @GetMapping("/clientScoreReport")
+    public ResponseEntity<ClientScoreReportDto> generateClientScoreReport() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = clientService.findByEmail(email);
+        if (client == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        ClientScoreReportDto clientScoreReportDto = constructClientScoreReportDto(client);
+
+        return new ResponseEntity<>(clientScoreReportDto, HttpStatus.ACCEPTED);
+    }
+
+    private ClientScoreReportDto constructClientScoreReportDto(Client client) {
+        ClientScoreReportDto clientScoreReportDto = new ClientScoreReportDto();
+        clientScoreReportDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
+        clientScoreReportDto.setScoresPerMonth(initializeClientReportValues());
+        setClientReportScoresPerMonth(client, clientScoreReportDto);
+
+        return clientScoreReportDto;
+    }
+
+    private void setClientReportScoresPerMonth(Client client, ClientScoreReportDto clientScoreReportDto) {
+        List<UserLobbySession> quizzesPlayed = client.getLobbies();
+        for (UserLobbySession userLobbySession : quizzesPlayed) {
+            int quizMonth = userLobbySession.getLobby().getCreationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonthValue() - 1;
+            if (userLobbySession.getScore() != null) {
+                clientScoreReportDto.getScoresPerMonth().set(quizMonth, clientScoreReportDto.getScoresPerMonth().get(quizMonth) + userLobbySession.getScore());
+            }
+        }
+    }
+
+    private List<Integer> initializeClientReportValues() {
+        List<Integer> values = new ArrayList<>();
+        for (int month = 0; month < 12; month++) {
+            values.add(0);
+        }
+        return values;
     }
 
     @GetMapping("/lobbyReport/{id}")
