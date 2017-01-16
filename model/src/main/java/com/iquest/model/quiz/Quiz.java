@@ -37,6 +37,9 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private String title;
+    private String description;
+
     @OneToOne(mappedBy = "quiz", optional = false)
     private Lobby lobby;
 
@@ -56,6 +59,22 @@ public class Quiz {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Lobby getLobby() {
@@ -98,6 +117,8 @@ public class Quiz {
         Quiz quiz = (Quiz) o;
 
         if (id != null ? !id.equals(quiz.id) : quiz.id != null) return false;
+        if (title != null ? !title.equals(quiz.title) : quiz.title != null) return false;
+        if (description != null ? !description.equals(quiz.description) : quiz.description != null) return false;
         return quizType == quiz.quizType;
 
     }
@@ -105,6 +126,8 @@ public class Quiz {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (quizType != null ? quizType.hashCode() : 0);
         return result;
     }

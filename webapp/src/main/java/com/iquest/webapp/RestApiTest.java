@@ -11,7 +11,11 @@ import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 import com.iquest.model.quiz.question.Question;
 import com.iquest.model.quiz.question.QuestionType;
 import com.iquest.model.quiz.question.SimpleQuestion;
-import com.iquest.model.user.*;
+import com.iquest.model.user.Admin;
+import com.iquest.model.user.Client;
+import com.iquest.model.user.User;
+import com.iquest.model.user.UserLobbySession;
+import com.iquest.model.user.UserType;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -75,6 +79,8 @@ public class RestApiTest {
 
     private static GamefiedQuiz createGamefiedQuiz(Client client, List<Question> questions) {
         GamefiedQuiz gamefiedQuiz = new GamefiedQuiz();
+        gamefiedQuiz.setTitle("Auto created gamefied quiz");
+        gamefiedQuiz.setDescription("General description");
         gamefiedQuiz.setClient(client);
         gamefiedQuiz.setQuestions(questions);
         gamefiedQuiz.setQuizType(QuizType.GAMEFIED_QUIZ);

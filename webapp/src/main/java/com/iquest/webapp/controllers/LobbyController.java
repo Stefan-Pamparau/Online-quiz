@@ -177,6 +177,8 @@ public class LobbyController extends AbstractController {
         Session session = getUserSession(email);
         Lobby lobby = session.getLobby();
         lobbyService.save(lobby);
+        session.setLobby(null);
+        SessionMap.getInstance().put(email, session);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
