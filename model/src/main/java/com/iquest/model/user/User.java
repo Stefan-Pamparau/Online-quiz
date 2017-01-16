@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,6 +37,9 @@ public class User {
     private List<Friendship> friendships;
 
     public void addFriendship(Friendship friendship) {
+        if(friendships == null) {
+            friendships = new ArrayList<>();
+        }
         friendships.add(friendship);
     }
 

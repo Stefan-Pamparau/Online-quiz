@@ -41,6 +41,8 @@ public interface UserService {
      */
     User save(User user);
 
+    User update(User user);
+
     /**
      * Retrieves an user by its id.
      *
@@ -94,4 +96,16 @@ public interface UserService {
      * Deletes all users managed by the service.
      */
     void deleteAll();
+
+    List<User> findByEmailContaining(String pattern);
+
+    /**
+     * Adds a friendship between a requester and a friend.
+     *
+     * @param requester - requester of the friendship
+     * @param friend    - friend for the requester
+     */
+    void addFriend(User requester, User friend);
+
+    void removeFriend(User requester, User friend);
 }

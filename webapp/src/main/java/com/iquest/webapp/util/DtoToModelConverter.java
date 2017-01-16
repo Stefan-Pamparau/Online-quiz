@@ -8,8 +8,10 @@ import com.iquest.model.quiz.answer.MultipleChoiceAnswer;
 import com.iquest.model.quiz.answer.SimpleAnswer;
 import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 import com.iquest.model.quiz.question.SimpleQuestion;
+import com.iquest.model.user.Admin;
 import com.iquest.model.user.Client;
 import com.iquest.model.user.User;
+import com.iquest.model.user.UserType;
 import com.iquest.webapp.dto.frommodel.ClientDto;
 import com.iquest.webapp.dto.frommodel.ExamQuizDto;
 import com.iquest.webapp.dto.frommodel.GamefiedQuizDto;
@@ -125,16 +127,52 @@ public class DtoToModelConverter {
     public static Client convertToClient(ClientDto clientDto) {
         Client client = new Client();
 
-        client.setId(clientDto.getId());
-        client.setFirstName(clientDto.getFirstName());
-        client.setSurname(clientDto.getSurname());
-        client.setAge(clientDto.getAge());
-        client.setEmail(clientDto.getEmail());
-        client.setPassword(clientDto.getPassword());
-        client.setConfirmed(clientDto.getConfirmed());
-        client.setToken(clientDto.getToken());
-        client.setUserType(clientDto.getUserType());
+        test(client, clientDto.getId(), clientDto.getFirstName(), clientDto.getSurname(), clientDto.getAge(), clientDto.getEmail(), clientDto.getPassword(), clientDto.getConfirmed(), clientDto.getToken(), clientDto.getUserType());
 
         return client;
+    }
+
+    private static void test(Client client, Integer id, String firstName, String surname, Integer age, String email, String password, Boolean confirmed, String token, UserType userType) {
+        client.setId(id);
+        client.setFirstName(firstName);
+        client.setSurname(surname);
+        client.setAge(age);
+        client.setEmail(email);
+        client.setPassword(password);
+        client.setConfirmed(confirmed);
+        client.setToken(token);
+        client.setUserType(userType);
+    }
+
+    public static Client convertToClient(UserDto userDto) {
+        Client client = new Client();
+
+        client.setId(userDto.getId());
+        client.setFirstName(userDto.getFirstName());
+        client.setSurname(userDto.getSurname());
+        client.setAge(userDto.getAge());
+        client.setEmail(userDto.getEmail());
+        client.setPassword(userDto.getPassword());
+        client.setConfirmed(userDto.getConfirmed());
+        client.setToken(userDto.getToken());
+        client.setUserType(userDto.getUserType());
+
+        return client;
+    }
+
+    public static Admin convertToAdmin(UserDto userDto) {
+        Admin admin = new Admin();
+
+        admin.setId(userDto.getId());
+        admin.setFirstName(userDto.getFirstName());
+        admin.setSurname(userDto.getSurname());
+        admin.setAge(userDto.getAge());
+        admin.setEmail(userDto.getEmail());
+        admin.setPassword(userDto.getPassword());
+        admin.setConfirmed(userDto.getConfirmed());
+        admin.setToken(userDto.getToken());
+        admin.setUserType(userDto.getUserType());
+
+        return admin;
     }
 }

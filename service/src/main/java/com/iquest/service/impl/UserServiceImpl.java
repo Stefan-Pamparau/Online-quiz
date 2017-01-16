@@ -1,7 +1,9 @@
 package com.iquest.service.impl;
 
 import com.iquest.dao.UserDao;
+import com.iquest.model.user.Friendship;
 import com.iquest.model.user.User;
+import com.iquest.service.FriendshipService;
 import com.iquest.service.UserService;
 import com.iquest.service.util.ServiceUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+    private FriendshipService friendshipService;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, FriendshipService friendshipService) {
         this.userDao = userDao;
+        this.friendshipService = friendshipService;
     }
 
     @Override
@@ -41,6 +45,11 @@ public class UserServiceImpl implements UserService {
         if (findByEmail(user.getEmail()) != null) {
             return null;
         }
+        return userDao.save(user);
+    }
+
+    @Override
+    public User update(User user) {
         return userDao.save(user);
     }
 
@@ -77,6 +86,41 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteAll() {
         userDao.deleteAll();
+    }
+
+    @Override
+    public List<User> findByEmailContaining(String pattern) {
+        return userDao.findByEmailContaining(pattern);
+    }
+
+    @Override
+    public void addFriend(User requester, User friend) {
+        Friendship friendship = new Friendship();
+        friendship.setRequester(requester);
+        friendship.setFriend(friend);
+        friendship.getId().setRequesterId(requester.getId());
+        friendship.getId().setFriendId(friend.getId());
+        friendshipService.save(friendship);
+        requester.addFriendship(friendship);
+        friend.addFriendship(friendship);
+        update(requester);
+        update(friend);
+    }
+
+    @Override
+    public void removeFriend(User requester, User friend) {
+        User persistedUser = findByEmail(requester.getEmail());
+        Friendship toBeRemoved = null;
+        for (Friendship friendship : persistedUser.getFriendships()) {
+            if (friendship.getFriend().getEmail().equals(friend.getEmail())) {
+                toBeRemoved = friendship;
+            }
+        }
+        if (toBeRemoved != null) {
+            requester.getFriendships().remove(toBeRemoved);
+            update(requester);
+            friendshipService.delete(toBeRemoved);
+        }
     }
 
     public UserDao getUserDao() {

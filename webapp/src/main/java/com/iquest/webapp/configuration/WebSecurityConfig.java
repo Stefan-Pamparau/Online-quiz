@@ -40,8 +40,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.OPTIONS, "/client/add/friend").permitAll()
                 .antMatchers("/client/add/friend").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
-                .antMatchers(HttpMethod.OPTIONS, "/client/get/clientWithQuizzes").permitAll()
-                .antMatchers("/client/get/clientWithQuizzes").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/client/get/completeClient").permitAll()
+                .antMatchers("/client/get/completeClient").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
                 .antMatchers(HttpMethod.OPTIONS, "/client/**").permitAll()
                 .antMatchers("/client/**").hasAuthority(ADMIN_AUTHORITY)
 

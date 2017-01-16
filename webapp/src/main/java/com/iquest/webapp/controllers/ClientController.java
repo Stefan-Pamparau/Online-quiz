@@ -3,10 +3,11 @@ package com.iquest.webapp.controllers;
 import com.iquest.model.quiz.Quiz;
 import com.iquest.model.quiz.QuizType;
 import com.iquest.model.user.Client;
+import com.iquest.model.user.Friendship;
 import com.iquest.service.ClientService;
-import com.iquest.webapp.dto.ClientWithQuizzesDto;
+import com.iquest.webapp.dto.CompleteClientDto;
+import com.iquest.webapp.dto.frommodel.FriendshipDto;
 import com.iquest.webapp.util.ModelToDtoConverter;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,42 +121,41 @@ public class ClientController extends AbstractController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/add/friend")
-    public ResponseEntity<Void> addFriend(HttpServletRequest request, @RequestBody Client friend) {
-        logger.info(String.format("Adding friend %s", friend));
-
-        Client requester = clientService.findByEmail(request.getUserPrincipal().getName());
-        clientService.addFriend(requester, friend);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/get/clientWithQuizzes")
-    public ResponseEntity<ClientWithQuizzesDto> getClientWithQuizzes() {
+    @GetMapping("/get/completeClient")
+    public ResponseEntity<CompleteClientDto> getClientWithQuizzes() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientService.findByEmail(email);
         if (client == null) {
-            return new ResponseEntity<ClientWithQuizzesDto>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<CompleteClientDto>(HttpStatus.NOT_FOUND);
         }
 
-        ClientWithQuizzesDto clientWithQuizzesDto = constructClientWithQuizzesDto(client);
+        CompleteClientDto completeClientDto = constructCompleteClientDto(client);
 
-        return new ResponseEntity<ClientWithQuizzesDto>(clientWithQuizzesDto, HttpStatus.OK);
+        return new ResponseEntity<CompleteClientDto>(completeClientDto, HttpStatus.OK);
     }
 
-    private ClientWithQuizzesDto constructClientWithQuizzesDto(Client client) {
-        ClientWithQuizzesDto clientWithQuizzesDto = new ClientWithQuizzesDto();
-        clientWithQuizzesDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
-        clientWithQuizzesDto.setExamQuizDtos(new ArrayList<>());
-        clientWithQuizzesDto.setGamefiedQuizDtos(new ArrayList<>());
+    private CompleteClientDto constructCompleteClientDto(Client client) {
+        CompleteClientDto completeClientDto = new CompleteClientDto();
+        completeClientDto.setClientDto(ModelToDtoConverter.convertToClientDto(client));
+        completeClientDto.setExamQuizDtos(new ArrayList<>());
+        completeClientDto.setGamefiedQuizDtos(new ArrayList<>());
+        completeClientDto.setFriendshipDtos(new ArrayList<>());
 
         for (Quiz quiz : client.getQuizzes()) {
             if (QuizType.EXAM_QUIZ == quiz.getQuizType()) {
-                clientWithQuizzesDto.getExamQuizDtos().add(ModelToDtoConverter.convertToExamQuizDto(quiz));
+                completeClientDto.getExamQuizDtos().add(ModelToDtoConverter.convertToExamQuizDto(quiz));
             } else {
-                clientWithQuizzesDto.getGamefiedQuizDtos().add(ModelToDtoConverter.convertToGamefiedQuizDto(quiz));
+                completeClientDto.getGamefiedQuizDtos().add(ModelToDtoConverter.convertToGamefiedQuizDto(quiz));
             }
         }
-        return clientWithQuizzesDto;
+
+        for (Friendship friendship : client.getFriendships()) {
+            FriendshipDto friendshipDto = new FriendshipDto();
+            friendshipDto.setRequester(ModelToDtoConverter.convertToUserDto(friendship.getRequester()));
+            friendshipDto.setFriend(ModelToDtoConverter.convertToUserDto(friendship.getFriend()));
+            completeClientDto.getFriendshipDtos().add(friendshipDto);
+        }
+
+        return completeClientDto;
     }
 }
