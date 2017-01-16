@@ -1,13 +1,18 @@
 package com.iquest.webapp.controllers;
 
 import com.iquest.model.user.Admin;
+import com.iquest.model.user.Friendship;
 import com.iquest.service.AdminService;
+import com.iquest.webapp.dto.CompleteAdminDto;
+import com.iquest.webapp.dto.frommodel.FriendshipDto;
+import com.iquest.webapp.util.ModelToDtoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -112,5 +118,33 @@ public class AdminController extends AbstractController {
         logger.info("Deleting all admins");
         adminService.deleteAll();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/get/completeAdmin")
+    public ResponseEntity<CompleteAdminDto> getClientWithQuizzes() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Admin admin = adminService.findByEmail(email);
+        if (admin == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        CompleteAdminDto completeAdminDto = constructCompleteAdminDto(admin);
+
+        return new ResponseEntity<>(completeAdminDto, HttpStatus.OK);
+    }
+
+    private CompleteAdminDto constructCompleteAdminDto(Admin admin) {
+        CompleteAdminDto completeAdminDto = new CompleteAdminDto();
+        completeAdminDto.setAdminDto(ModelToDtoConverter.convertToAdminDto(admin));
+        completeAdminDto.setFriendshipDtos(new ArrayList<>());
+
+        for (Friendship friendship : admin.getFriendships()) {
+            FriendshipDto friendshipDto = new FriendshipDto();
+            friendshipDto.setRequester(ModelToDtoConverter.convertToUserDto(friendship.getRequester()));
+            friendshipDto.setFriend(ModelToDtoConverter.convertToUserDto(friendship.getFriend()));
+            completeAdminDto.getFriendshipDtos().add(friendshipDto);
+        }
+
+        return completeAdminDto;
     }
 }

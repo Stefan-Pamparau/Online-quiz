@@ -126,12 +126,12 @@ public class ClientController extends AbstractController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = clientService.findByEmail(email);
         if (client == null) {
-            return new ResponseEntity<CompleteClientDto>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         CompleteClientDto completeClientDto = constructCompleteClientDto(client);
 
-        return new ResponseEntity<CompleteClientDto>(completeClientDto, HttpStatus.OK);
+        return new ResponseEntity<>(completeClientDto, HttpStatus.OK);
     }
 
     private CompleteClientDto constructCompleteClientDto(Client client) {

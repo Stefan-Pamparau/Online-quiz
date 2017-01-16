@@ -2,12 +2,15 @@ package com.iquest.webapp.controllers;
 
 import com.iquest.model.Lobby;
 import com.iquest.model.user.Client;
+import com.iquest.model.user.User;
 import com.iquest.model.user.UserLobbySession;
 import com.iquest.service.ClientService;
 import com.iquest.service.LobbyService;
+import com.iquest.service.UserService;
 import com.iquest.webapp.dto.report.ClientActivityReportDto;
 import com.iquest.webapp.dto.report.ClientScoreReportDto;
 import com.iquest.webapp.dto.report.LobbyReportDto;
+import com.iquest.webapp.dto.report.UsersScoreReportDto;
 import com.iquest.webapp.util.ModelToDtoConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +35,13 @@ public class ReportController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
+    private UserService userService;
     private ClientService clientService;
     private LobbyService lobbyService;
 
     @Autowired
-    public ReportController(ClientService clientService, LobbyService lobbyService) {
+    public ReportController(UserService userService, ClientService clientService, LobbyService lobbyService) {
+        this.userService = userService;
         this.clientService = clientService;
         this.lobbyService = lobbyService;
     }
@@ -109,6 +114,27 @@ public class ReportController extends AbstractController {
             values.add(0);
         }
         return values;
+    }
+
+    @GetMapping("/usersScoreReport")
+    public ResponseEntity<UsersScoreReportDto> generateUserScoresReportDto() {
+        UsersScoreReportDto userScoresReportDto = new UsersScoreReportDto();
+        userScoresReportDto.setUserDtos(new ArrayList<>());
+        userScoresReportDto.setScoresPerUser(new ArrayList<>());
+        List<User> users = userService.findAll();
+
+        for (User user : users) {
+            userScoresReportDto.getUserDtos().add(ModelToDtoConverter.convertToUserDto(user));
+            int score = 0;
+            for (UserLobbySession userLobbySession : user.getLobbies()) {
+                if (userLobbySession.getScore() != null) {
+                    score += userLobbySession.getScore();
+                }
+            }
+            userScoresReportDto.getScoresPerUser().add(score);
+        }
+
+        return new ResponseEntity<>(userScoresReportDto, HttpStatus.OK);
     }
 
     @GetMapping("/lobbyReport/{id}")

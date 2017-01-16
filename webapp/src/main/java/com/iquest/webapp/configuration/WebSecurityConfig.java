@@ -35,6 +35,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
+
+                .antMatchers(HttpMethod.OPTIONS, "/admin/get/completeAdmin").permitAll()
+                .antMatchers("/admin/get/completeAdmin").hasAuthority(ADMIN_AUTHORITY)
                 .antMatchers(HttpMethod.OPTIONS, "/admin/**").permitAll()
                 .antMatchers("/admin/**").hasAuthority(ADMIN_AUTHORITY)
 
@@ -69,6 +72,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS, "/simpleQuestion/**").permitAll()
                 .antMatchers("/simpleQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
 
+//                .antMatchers(HttpMethod.OPTIONS, "/reports/usersScoreReport").permitAll()
+//                .antMatchers("/reports/usersScoreReport").hasAuthority(ADMIN_AUTHORITY)
                 .antMatchers(HttpMethod.OPTIONS, "/reports/**").permitAll()
                 .antMatchers("/reports/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
 

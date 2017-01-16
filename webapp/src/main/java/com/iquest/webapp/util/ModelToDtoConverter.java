@@ -9,8 +9,10 @@ import com.iquest.model.quiz.answer.SimpleAnswer;
 import com.iquest.model.quiz.question.MultipleChoiceQuestion;
 import com.iquest.model.quiz.question.Question;
 import com.iquest.model.quiz.question.SimpleQuestion;
+import com.iquest.model.user.Admin;
 import com.iquest.model.user.Client;
 import com.iquest.model.user.User;
+import com.iquest.webapp.dto.frommodel.AdminDto;
 import com.iquest.webapp.dto.frommodel.ClientDto;
 import com.iquest.webapp.dto.frommodel.ExamQuizDto;
 import com.iquest.webapp.dto.frommodel.GamefiedQuizDto;
@@ -146,6 +148,22 @@ public class ModelToDtoConverter {
         clientDto.setUserType(client.getUserType());
 
         return clientDto;
+    }
+
+    public static AdminDto convertToAdminDto(Admin admin) {
+        AdminDto adminDto = new AdminDto();
+
+        adminDto.setId(admin.getId());
+        adminDto.setFirstName(admin.getFirstName());
+        adminDto.setSurname(admin.getSurname());
+        adminDto.setAge(admin.getAge());
+        adminDto.setEmail(admin.getEmail());
+        adminDto.setPassword(admin.getPassword());
+        adminDto.setConfirmed(admin.getConfirmed());
+        adminDto.setToken(admin.getToken());
+        adminDto.setUserType(admin.getUserType());
+
+        return adminDto;
     }
 
     public static ExamQuizDto convertToExamQuizDto(Quiz quiz) {
