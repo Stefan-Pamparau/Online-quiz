@@ -72,8 +72,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS, "/simpleQuestion/**").permitAll()
                 .antMatchers("/simpleQuestion/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
 
-//                .antMatchers(HttpMethod.OPTIONS, "/reports/usersScoreReport").permitAll()
-//                .antMatchers("/reports/usersScoreReport").hasAuthority(ADMIN_AUTHORITY)
+                .antMatchers(HttpMethod.OPTIONS, "/reports/usersScoreReport").permitAll()
+                .antMatchers("/reports/usersScoreReport").hasAuthority(ADMIN_AUTHORITY)
                 .antMatchers(HttpMethod.OPTIONS, "/reports/**").permitAll()
                 .antMatchers("/reports/**").hasAnyAuthority(ADMIN_OR_CLIENT_AUTHORITY)
 
@@ -94,7 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 String password = authentication.getCredentials().toString();
                 User user = userService.findByEmailAndPassword(email, password);
 
-                if (user != null && user.getConfirmed()) {
+                if (user != null && user.getConfirmed() != null && user.getConfirmed()) {
                     Authentication auth;
                     if (UserType.ADMIN == user.getUserType()) {
                         auth = new UsernamePasswordAuthenticationToken(email, password, AuthorityUtils.createAuthorityList("ADMIN"));
