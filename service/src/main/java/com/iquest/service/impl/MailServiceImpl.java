@@ -18,8 +18,8 @@ public class MailServiceImpl implements MailService {
     private List<String> subscribers;
 
     public MailServiceImpl() {
-        this.username = "sd.assignment3@gmail.com";
-        this.password = "stef654321";
+        this.username = "";
+        this.password = "";
 
         props = new Properties();
         props.put("mail.smtp.auth", "true");
